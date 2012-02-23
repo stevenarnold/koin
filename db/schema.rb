@@ -11,11 +11,28 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120217045059) do
+ActiveRecord::Schema.define(:version => 20120219172630) do
 
   create_table "data_files", :force => true do |t|
     t.string   "digest"
     t.string   "path"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "p_only_creator"
+    t.boolean  "p_any_logged_user"
+    t.boolean  "p_upon_token_presentation"
+    t.string   "token_id"
+    t.integer  "creator_id"
+    t.integer  "size"
+  end
+
+  create_table "users", :force => true do |t|
+    t.string   "username"
+    t.string   "enc_passwd"
+    t.string   "salt"
+    t.boolean  "p_search_all", :default => false
+    t.boolean  "p_admin",      :default => false
+    t.integer  "quota",        :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end

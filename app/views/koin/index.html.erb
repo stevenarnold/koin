@@ -8,6 +8,12 @@
     <header>
       File saved under token <%= @df.digest %>
     </header>
+    <% else %>
+      <% if @token %>
+      <header>
+        Token <%= @token %> not found
+      </header>
+      <% end %>
     <% end %>
     <%= form_tag({:action => 'uploadFile'}, :multipart => true) do %>
       <p><label for="upload_file">Select File</label>: 
