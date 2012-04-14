@@ -1,7 +1,7 @@
 class KoinController < ApplicationController
-  before_filter :get_user_from_cookie, :download, :edit
-  before_filter :get_token, :download
-  before_filter :get_datafile_from_token, :edit
+  before_filter :get_user_from_cookie, :only => [:download, :edit, :uploadFile]
+  before_filter :get_token, :only => :download
+  before_filter :get_datafile_from_token, :only => :edit
   
   def get_user_from_cookie
     @user = Users.where("cookie_exp > date('now') and cookie = ?", cookies[:login])[0]
@@ -35,7 +35,7 @@ class KoinController < ApplicationController
       if (@df.p_only_creator && @user.id == @df.creator_id) ||
          (@df.p_any_logged_user && @user && @user.username != 'guest') ||
          (@df.p_upon_token_presentation && @df)
-        send_file @df.path, type: "application/octet-stream"
+        send_file @df.path, :type => "application/octet-stream"
       end
     else
       respond_to do |format|
@@ -44,10 +44,6 @@ class KoinController < ApplicationController
         }
       end
     end
-  end
-
-  def foobar
-    "Hello World!"
   end
 
   def edit
