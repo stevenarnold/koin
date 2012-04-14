@@ -19,6 +19,7 @@ class UsersTable < ActiveRecord::Migration
 
   def down
     drop_table :users
-    remove_columns :data_files, :token_id, :creator_id
+    remove_columns :data_files, :token_id, :creator_id, :p_upon_token_presentation
+    remove_columns :data_files, :size, :p_only_creator, :p_any_logged_user
   end
 end

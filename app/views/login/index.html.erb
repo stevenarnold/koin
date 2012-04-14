@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>Log In</title>
+    <style type="text/css">
+      label {
+        float: left;
+        width: 100px;
+        display: block;
+      }
+      #error {
+        border: 1px solid red;
+        padding: 2px;
+      }
+    </style>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#user').focus();
+      });
+    </script>
+  </head>
+  <body>
+    <% if flash[:notice] %>
+      <h3 id="error"><%= flash[:notice] %></h3>
+    <% end %>
+    <h1>Please Log In</h1>
+    <%= form_tag(action: 'auth') do %>
+      <%= label_tag 'username' %>
+      <%= text_field_tag 'user' %>
+      <br />
+      <%= label_tag 'password' %>
+      <%= password_field_tag 'pass' %>
+      <br />
+      <%= submit_tag 'Submit' %>
+    <% end %>
+  </body>
+</html>
+

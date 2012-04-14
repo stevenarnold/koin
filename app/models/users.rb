@@ -16,6 +16,15 @@ class Users < ActiveRecord::Base
     super
   end
 
+  def is_admin
+    self.p_admin
+  end
+
+  def owns_token(token)
+    df =  DataFile.where("digest LIKE ?", token)[0]
+    self.id == df.creator_id
+  end
+
   def initialize(attributes)
     @passwd = attributes[:passwd]
     attributes.delete(:passwd)

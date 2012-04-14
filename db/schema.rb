@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120219172630) do
+ActiveRecord::Schema.define(:version => 20120223203213) do
 
   create_table "data_files", :force => true do |t|
     t.string   "digest"
@@ -35,6 +35,8 @@ ActiveRecord::Schema.define(:version => 20120219172630) do
     t.integer  "quota",        :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "cookie"
+    t.datetime "cookie_exp"
   end
 
 end

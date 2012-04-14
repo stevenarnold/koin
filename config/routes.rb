@@ -3,11 +3,14 @@ Koin::Application.routes.draw do
   # first created -> highest priority.
   #
 
-  match '/' => 'koin#index'
-  match 'index/' => 'koin#index'
-  match 'koin/uploadFile' => 'koin#uploadFile'
-  match 'token/:token' => 'koin#download'
-  match 'auth/:user/:pass' => 'koin#auth'
+  # match '/' => 'koin#index'
+  # match 'index/' => 'koin#index'
+  # match 'koin/index' => 'koin#index'
+  match 'koin/uploadFile', :controller => 'koin', :action => 'foobar'
+  # match 'edit/:token' => 'koin#edit'
+  # match 'token/:token' => 'koin#download'
+  # match 'login' => 'login#auth'
+  # match 'login/index' => 'login#index'
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'

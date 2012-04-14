@@ -1,9 +1,41 @@
 <html>
   <head>
     <title>File Upload</title>
+    <style type="text/css">
+      #first-header {
+        clear: both;
+        overflow: auto;
+        height: 1%;
+      }
+      #first-header h1 {
+        float: left;
+        text-align: left;
+        width: 49%;
+      }
+      #first-header span {
+        float: right;
+        text-align: right;
+        width: 49%;
+      }
+    </style>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#upload_datafile').focus();
+      });
+    </script>
   </head>
   <body>
-    <h1>File Upload</h1>
+    <header id="first-header">
+      <h1>File Upload</h1>
+      <span>
+        Welcome, <%= @user.username %> || 
+        <% if is_authenticated? %>
+          <a href="/login">Log In</a>
+        <% else %>
+          <a href="/login">Log In As Another User</a>
+        <% end %>
+      </span>
+    </header>
     <% if @df %>
     <header>
       File saved under token <%= @df.digest %>
@@ -15,10 +47,20 @@
       </header>
       <% end %>
     <% end %>
-    <%= form_tag({:action => 'uploadFile'}, :multipart => true) do %>
-      <p><label for="upload_file">Select File</label>: 
-      <%= file_field 'upload', 'datafile' %></p>
-      <%= submit_tag "Upload" %>
-    <% end %>
+    <div class="spacer">
+    </div>
+    <div>
+      <%= form_tag({controller: 'koin', action: 'uploadFile'}, :multipart => true) do %>
+        <p><label for="upload_file">Select File</label>: 
+        <%= file_field 'upload', 'datafile' %></p>
+        <% if !@guest %>
+        Allow downloads for this file from:<br />
+        <%= radio_button_tag :download_perms, 'me' %>Only Me<br />
+        <%= radio_button_tag :download_perms, 'users' %>Any Logged In User<br />
+        <%= radio_button_tag :download_perms, 'anyone', checked: true %>Anyone<br />
+        <% end %>
+        <%= submit_tag "Upload" %>
+      <% end %>
+    </div>
   </body>
 </html>
