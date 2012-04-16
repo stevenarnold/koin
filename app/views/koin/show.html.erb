@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>Your Viewable Files</titles>
+  </head>
+  <body>
+    <table id="filetable">
+      <tr>
+        <th>Filename</th>
+        <th>Hash</th>
+        <th>Size</th>
+        <th>Expiration</th>
+        <th>Action</th>
+      </tr>
+      <% for file in @files %>
+      <tr>
+        <th><%= File.baename(file.path) %></th>
+        <th><%= file.token_id %></th>
+        <th><%= File.size %></th>
+        <th>&nbsp;</th>
+        <th><submit_tag "Delete"></th>
+      </tr>
+      <% end %>
+    </table>
+  </body>
+</html>

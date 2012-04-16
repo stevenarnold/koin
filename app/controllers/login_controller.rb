@@ -2,6 +2,7 @@ require 'digest/md5'
 
 class LoginController < ApplicationController
 
+  #FIXME neither a cookie nor an expiration are put here presently
   def auth
     user, pass = params[:user], params[:pass]
     if user && pass

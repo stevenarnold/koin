@@ -1,12 +1,12 @@
 class KoinController < ApplicationController
-  before_filter :get_user_from_cookie, :only => [:download, :edit, :uploadFile]
+  before_filter :get_user_from_cookie, :only => [:download, :edit, :uploadFile, :show]
   before_filter :get_token, :only => :download
   before_filter :get_datafile_from_token, :only => :edit
   
   def get_user_from_cookie
     @user = Users.where("cookie_exp > date('now') and cookie = ?", cookies[:login])[0]
     @guest = true
-    if @user
+    if @user != nil
       @guest = false
     else
       @user = Users.find_by_username('guest')
@@ -62,6 +62,21 @@ class KoinController < ApplicationController
           render :index
         }
       end
+    end
+  end
+  
+  # Shows files tha the logged in user has permission to see.
+  def show
+    unless @guest
+      if @user.p_admin
+        @files = DataFile.find(:all)
+      else
+        @files = DataFile.where("creator_id = ?", @user.id)
+      end
+      render :show
+    else
+      logger.debug("rendering as guest")
+      render :index
     end
   end
 
