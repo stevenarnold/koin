@@ -9,7 +9,7 @@ class LoginController < ApplicationController
       dbuser = Users.find_by_username(user)
       if dbuser && Digest::MD5.hexdigest(pass + dbuser.salt) == dbuser.enc_passwd
         flash[:notice] = 'Login Successful!'
-        @user = dbuser
+        session[:user] = @user = dbuser
         render 'koin/index'
       else
         flash[:notice] = 'Incorrect username or password'

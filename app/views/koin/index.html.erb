@@ -36,14 +36,14 @@
         <% end %>
       </span>
     </header>
-    <% if @df %>
+    <% if @df && @user.id == @df.creator_id %>
     <header>
       File saved under token <%= @df.digest %>
     </header>
     <% else %>
       <% if @token %>
       <header>
-        Token <%= @token %> not found
+        Token <%= @token %> not found or permission not granted
       </header>
       <% end %>
     <% end %>

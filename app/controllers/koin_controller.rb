@@ -1,12 +1,14 @@
 class KoinController < ApplicationController
-  before_filter :get_user_from_cookie, :only => [:download, :edit, :uploadFile, :show]
+  before_filter :get_user_from_cookie, :only => [:download, :edit, :uploadFile, :show, :index]
   before_filter :get_token, :only => :download
   before_filter :get_datafile_from_token, :only => :edit
   
   def get_user_from_cookie
-    @user = Users.where("cookie_exp > date('now') and cookie = ?", cookies[:login])[0]
+    #@user = Users.where("cookie_exp > date('now') and cookie = ?", cookies[:login])[0]
+    @user = session[:user]
     @guest = true
-    if @user != nil
+    #logger.debug("user = #{@user}")
+    if @user
       @guest = false
     else
       @user = Users.find_by_username('guest')
@@ -25,19 +27,30 @@ class KoinController < ApplicationController
       @df = false
     end
   end
+  
+  def index
+  end
 
   def download
     logger.debug("In download")
     # Download a file by token
     @token = params[:token]
+    logger.debug("In download1")
     @df = DataFile.where("digest LIKE ?", @token)[0]
+    logger.debug("In download2")
     if @df && @df.digest.length == 32
+    logger.debug("In download3")
+    debugger
       if (@df.p_only_creator && @user.id == @df.creator_id) ||
          (@df.p_any_logged_user && @user && @user.username != 'guest') ||
          (@df.p_upon_token_presentation && @df)
+        logger.debug("In download4")
         send_file @df.path, :type => "application/octet-stream"
+      else
+        render :index
       end
     else
+      logger.debug("In else")
       respond_to do |format|
         format.html {
           render :index
@@ -81,7 +94,6 @@ class KoinController < ApplicationController
   end
 
   def uploadFile
-    logger.debug("Hello, world!")
     @df = DataFile.new
     parm = params[:download_perms] || 'anyone'
     case parm
@@ -98,6 +110,7 @@ class KoinController < ApplicationController
       @df.p_any_logged_user = false
       @df.p_upon_token_presentation = true
     end
+    @df.creator_id = @user.id
     @df.capture_file(params[:upload])
     @df.save
     respond_to do |format|
