@@ -28,7 +28,7 @@
     <header id="first-header">
       <h1>File Upload</h1>
       <span>
-        Welcome, <%= @user.username %> || 
+      Welcome, <%= logged_user %> || 
         <% if is_authenticated? %>
           <a href="/login">Log In</a>
         <% else %>
