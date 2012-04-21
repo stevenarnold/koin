@@ -12,6 +12,7 @@ Koin::Application.routes.draw do
   match 'login' => 'login#auth'
   match 'login/index' => 'login#index'
   match 'koin/show' => 'koin#show'
+  match 'koin/show/(:user)' => 'koin#show'
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'

@@ -29,28 +29,24 @@ class KoinController < ApplicationController
   end
   
   def index
+    case 
+    when session[:next_action] == 'show'
+      delete session[:next_action]
+      render :show
+    end
   end
 
   def download
-    logger.debug("In download")
     # Download a file by token
     @token = params[:token]
-    logger.debug("In download1")
-    @df = DataFile.where("digest LIKE ?", @token)[0]
-    logger.debug("In download2")
+    @df = DataFile.where("token_id = ?", @token)[0]
     if @df && @df.digest.length == 32
-    logger.debug("In download3")
-    debugger
-      if (@df.p_only_creator && @user.id == @df.creator_id) ||
-         (@df.p_any_logged_user && @user && @user.username != 'guest') ||
-         (@df.p_upon_token_presentation && @df)
-        logger.debug("In download4")
+      if @user.can_download(@df)
         send_file @df.path, :type => "application/octet-stream"
       else
         render :index
       end
     else
-      logger.debug("In else")
       respond_to do |format|
         format.html {
           render :index
@@ -79,7 +75,18 @@ class KoinController < ApplicationController
   end
   
   # Shows files tha the logged in user has permission to see.
+  # If you're an admin, you have permission to view and delete all files.
+  # If you're a guest, you don't have permission to view or delete any files.
+  # If you're a logged-in user, you can:
+  #   - View and delete any files you posted;
+  #   - View any files posted by others users for logged-in users;
+  #   - View any files posted by guests
   def show
+    if params[:user] && params[:user] != @user.username
+      session[:next_action] = 'show'
+      redirect_to :controller => :login, :action => :index
+      return
+    end
     unless @guest
       if @user.p_admin
         @files = DataFile.find(:all)
@@ -88,7 +95,6 @@ class KoinController < ApplicationController
       end
       render :show
     else
-      logger.debug("rendering as guest")
       render :index
     end
   end

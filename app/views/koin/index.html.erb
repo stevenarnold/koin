@@ -30,15 +30,16 @@
       <span>
       Welcome, <%= logged_user %> || 
         <% if is_authenticated? %>
-          <a href="/login">Log In</a>
-        <% else %>
+          <a href="/koin/show">Show my files</a> ||
           <a href="/login">Log In As Another User</a>
+        <% else %>
+          <a href="/login">Log In</a>
         <% end %>
       </span>
     </header>
     <% if @df && @user.id == @df.creator_id %>
     <header>
-      File saved under token <%= @df.digest %>
+      File saved under token <%= @df.token_id %>
     </header>
     <% else %>
       <% if @token %>
