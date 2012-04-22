@@ -1,8 +1,40 @@
+require 'digest/md5'
+
 class KoinController < ApplicationController
+  before_filter :setup
   before_filter :get_user_from_cookie, :only => [:download, :edit, :uploadFile, :show, :index]
   before_filter :get_token, :only => :download
   before_filter :get_datafile_from_token, :only => :edit
-  
+
+  def initadmin
+    if params[:admin_password] != params[:repeat_password]
+      flash[:error] = "Passwords do not match."
+      render :create_admin
+      return
+    end
+    u = Users.new(:passwd => params[:admin_password])
+    u.username = params[:admin_username]
+    u.p_admin = 't'
+    u.save!
+    render :controller => :login, :action => :index
+  end
+ 
+  def setup
+    session[:createadmin] ||= false
+    if session[:createadmin]
+      return
+    else
+      if params[:initial_password] == 'LetsGetSetup'
+        @insetup = true
+        session[:createadmin] = true
+        render :setup_page
+      else
+        flash[:error] = "Incorrect password."
+        render :create_admin
+      end
+    end
+  end
+    
   def get_user_from_cookie
     #@user = Users.where("cookie_exp > date('now') and cookie = ?", cookies[:login])[0]
     @user = session[:user]

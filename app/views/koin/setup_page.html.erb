@@ -1,0 +1,15 @@
+<h1>Initial Admin User</h1>
+
+  <p class="error"><%= flash[:error] %><p>
+
+<p>Please enter an initial admin user and password.</p>
+
+<%= form_tag(:controller => "koin", :action => "initadmin") do %>
+  <p><label for="initial_code">Enter Initial User:</label></p> 
+  <p><%= text_field_tag 'admin_username', nil, :placeholder => 'Admin Username' %></p>
+  <p><%= password_field_tag 'admin_password', nil, :placeholder => 'Admin Password' %></p>
+  <p><%= password_field_tag 'repeat_password', nil, :placeholder => 'Confirm Password' %></p>
+  <p><%= submit_tag "Submit" %></p>
+<% end %>
+
+

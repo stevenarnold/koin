@@ -1,0 +1,13 @@
+<h1>Application Not Configured</h1>
+
+  <p class="error"><%= flash[:error] %><p>
+
+<p>Sorry, this application does not have an administrative user.  To start, please
+enter the hard-coded initial administrative password below.</p>
+
+<%= form_tag(:controller => :koin, :action => :setup) do %>
+  <p><label for="initial_code">Enter Initial Code:</label> 
+  <%= text_field_tag 'initial_password', nil, :placeholder => 'Initial Password' %></p>
+  <%= submit_tag "Submit" %>
+<% end %>
+
