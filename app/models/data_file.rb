@@ -17,5 +17,6 @@ class DataFile < ActiveRecord::Base
     # Get the MD5 of the file and return the fetch key
     self.digest = Digest::MD5.hexdigest(File.read(self.path))
     self.token_id = UUID.new.generate
+    # Quota handling.  Start by just getting the size.
   end  
 end

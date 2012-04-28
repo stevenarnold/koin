@@ -23,7 +23,7 @@ class KoinController < ApplicationController
     session[:createadmin] ||= false
     if session[:createadmin]
       return
-    else
+    elsif Users.where("p_admin = 't'").length == 0
       if params[:initial_password] == 'LetsGetSetup'
         @insetup = true
         session[:createadmin] = true
@@ -114,7 +114,7 @@ class KoinController < ApplicationController
   #   - View any files posted by others users for logged-in users;
   #   - View any files posted by guests
   def show
-    if params[:user] && params[:user] != @user.username
+    if !@user.p_admin && params[:user] && params[:user] != @user.username
       session[:next_action] = 'show'
       redirect_to :controller => :login, :action => :index
       return
@@ -156,5 +156,19 @@ class KoinController < ApplicationController
         render :index
       }
     end
+  end
+  
+  def admin
+    @users = Users.find_by_sql("SELECT    u.username, count(df.digest) AS num,
+                                          sum(df.size) AS size, u.quota
+                                FROM      users u
+                                LEFT JOIN data_files df
+                                ON        u.id = df.creator_id
+                                UNION ALL
+                                SELECT    u.username, 0 AS num, 0 AS size, u.quota
+                                FROM      users u
+                                WHERE     u.id NOT IN (SELECT    count(df.creator_id)
+                                                       FROM      data_files df)
+                                ORDER BY  u.username")
   end
 end

@@ -7,5 +7,9 @@ module KoinHelper
   def is_authenticated?
     @user ? @user.username != 'guest' : false
   end
+  
+  def is_admin?
+    @user.p_admin ? true : false
+  end
 
 end

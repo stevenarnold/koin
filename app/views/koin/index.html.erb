@@ -29,6 +29,9 @@
       <h1>File Upload</h1>
       <span>
       Welcome, <%= logged_user %> || 
+        <% if is_admin? %>
+          <a href="/koin/admin">Administer users</a> ||
+        <% end %>
         <% if is_authenticated? %>
           <a href="/koin/show">Show my files</a> ||
           <a href="/login">Log In As Another User</a>
