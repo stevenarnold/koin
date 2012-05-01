@@ -1,6 +1,8 @@
 require 'digest/md5'
 
 class KoinController < ApplicationController
+  layout "application"
+  
   before_filter :setup
   before_filter :get_user_from_cookie, :only => [:download, :edit, :uploadFile, :show, :index]
   before_filter :get_token, :only => :download
