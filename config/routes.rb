@@ -19,7 +19,7 @@ Koin::Application.routes.draw do
   match 'koin/setup' => 'koin#setup'
   match 'koin/admin' => 'koin#admin'
   
-  get 'assets/assets.css'
+  resources :users
   
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'

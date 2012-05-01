@@ -1,0 +1,28 @@
+<section id="admin">
+  <form method="get" action="/users/edit">
+    <h1>Administer Users</h1>
+    <table>
+      <tr>
+        <th colspan="5">Users</th>
+      </tr>
+      <tr>
+        <th>Username</th>
+        <th>Number of Files</th>
+        <th>Total File Space Used</th>
+        <th>Quota</th>
+        <th>Actions</th>
+      </tr>
+      <% @users.each do |u| %>
+      <tr>
+      <% logger.debug("attributes = %s" % u.attributes.keys.join(", ")) %>
+        <td><%= u.attributes["u.username"] %></td>
+        <td><%= u.attributes["num"] %></td>
+        <td><%= u.attributes["size"] %></td>
+        <td><%= u.attributes["u.quota"] ? 0 : "unlimited" %></td>
+        <td><input type="submit" value="Edit" id="<%= u.attributes["u.username"] %>"></td>
+      </tr>
+      <% end %>
+    </table>
+  </form>
+</section>
+  
