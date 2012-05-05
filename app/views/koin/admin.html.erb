@@ -1,5 +1,4 @@
 <section id="admin">
-  <form method="get" action="/users/edit">
     <h1>Administer Users</h1>
     <table>
       <tr>
@@ -19,10 +18,9 @@
         <td><%= u.attributes["num"] %></td>
         <td><%= u.attributes["size"] %></td>
         <td><%= u.attributes["u.quota"] ? 0 : "unlimited" %></td>
-        <td><input type="submit" value="Edit" id="<%= u.attributes["u.username"] %>"></td>
+        <td><%= link_to "Edit", "/users/edit/#{u.attributes['u.id'].to_i}" %></td>
       </tr>
       <% end %>
     </table>
-  </form>
 </section>
   

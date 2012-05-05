@@ -1,1 +1,26 @@
-<h1>Hello World!</h1>
+<h1>Edit Settings for <%= @user.username %></h1>
+<%= form_for @user do |f| %>
+  <div>
+    <%= f.label "Username:" %>
+    <%= @user.username %>
+  </div>
+  <div>
+    <%= f.label "Password:" %>
+    <span class="block"><%= text_field_tag :password %></span>
+  </div>
+  <div>
+    <%= f.label "Quota:" %>
+    <span class="block"><%= f.text_field :quota %> MB</span>
+  </div>
+  <div>
+    <%= f.label "Search All:" %>
+    <%= f.check_box :p_search_all %>
+  </div>
+  <div>
+    <%= f.label "Administrator:" %>
+    <%= f.check_box :p_admin %>
+  </div>
+  <div>
+    <%= f.submit "Apply" %>
+  </div>
+<% end %>

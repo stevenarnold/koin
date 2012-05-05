@@ -19,6 +19,9 @@ Koin::Application.routes.draw do
   match 'koin/setup' => 'koin#setup'
   match 'koin/admin' => 'koin#admin'
   
+  # Users
+  match 'users/edit/(:id)' => 'users#edit'
+  
   resources :users
   
   # Sample of regular route:

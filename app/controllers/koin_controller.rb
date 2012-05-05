@@ -36,18 +36,6 @@ class KoinController < ApplicationController
       end
     end
   end
-    
-  def get_user_from_cookie
-    #@user = Users.where("cookie_exp > date('now') and cookie = ?", cookies[:login])[0]
-    @user = session[:user]
-    @guest = true
-    #logger.debug("user = #{@user}")
-    if @user
-      @guest = false
-    else
-      @user = Users.find_by_username('guest')
-    end
-  end
 
   def get_token(token=false)
     @token = token || params[:token]
@@ -161,13 +149,13 @@ class KoinController < ApplicationController
   end
   
   def admin
-    @users = Users.find_by_sql("SELECT    u.username, count(df.digest) AS num,
+    @users = Users.find_by_sql("SELECT    u.id, u.username, count(df.digest) AS num,
                                           sum(df.size) AS size, u.quota
                                 FROM      users u
                                 LEFT JOIN data_files df
                                 ON        u.id = df.creator_id
                                 UNION ALL
-                                SELECT    u.username, 0 AS num, 0 AS size, u.quota
+                                SELECT    u.id, u.username, 0 AS num, 0 AS size, u.quota
                                 FROM      users u
                                 WHERE     u.id NOT IN (SELECT    count(df.creator_id)
                                                        FROM      data_files df)
