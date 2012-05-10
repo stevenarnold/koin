@@ -1,15 +1,27 @@
 module KoinHelper
 
   def logged_user
-    @user ? @user.username : "guest"
+    begin
+      @user ? @user.username : "guest"
+    rescue
+      "guest"
+    end
   end
   
   def is_authenticated?
-    @user ? @user.username != 'guest' : false
+    begin
+      @user ? @user.username != 'guest' : false
+    rescue
+      false
+    end
   end
   
   def is_admin?
-    @user.p_admin ? true : false
+    begin
+      @user.p_admin ? true : false
+    rescue
+      false
+    end
   end
 
 end

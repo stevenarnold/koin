@@ -1,7 +1,7 @@
 require 'digest/md5'
 
 class Users < ActiveRecord::Base
-  attr_accessible :username, :p_search_all, :p_admin
+  attr_accessible :username, :p_search_all, :p_admin, :quota
   has_many :data_files
   
   def _gensalt(len=8)

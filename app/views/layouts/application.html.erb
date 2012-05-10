@@ -8,6 +8,24 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+    <header id="first-header">
+      <h1><%= @action %></h1>
+      <span>
+        <span>
+        Welcome, <%= logged_user %> || 
+          <a href="/">Share files</a> ||
+          <% if is_admin? %>
+            <a href="/koin/admin">Administer users</a> ||
+          <% end %>
+          <% if is_authenticated? %>
+            <a href="/koin/show">Show my files</a> ||
+            <a href="/login">Log In As Another User</a>
+          <% else %>
+            <a href="/login">Log In</a>
+          <% end %>
+        </span>
+      </span>
+    </header>
 
 <%= yield %>
 

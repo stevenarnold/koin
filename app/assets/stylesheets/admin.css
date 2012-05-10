@@ -18,4 +18,20 @@ span.block input {
 form div {
   display: block;
 }
-  
+
+#first-header {
+  clear: both;
+  overflow: auto;
+  height: 1%;
+}
+#first-header h1 {
+  float: left;
+  text-align: left;
+  width: 49%;
+}
+#first-header span {
+  float: right;
+  text-align: right;
+  width: 49%;
+}
+

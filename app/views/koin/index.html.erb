@@ -1,45 +1,8 @@
-<html>
-  <head>
-    <title>File Upload</title>
-    <style type="text/css">
-      #first-header {
-        clear: both;
-        overflow: auto;
-        height: 1%;
-      }
-      #first-header h1 {
-        float: left;
-        text-align: left;
-        width: 49%;
-      }
-      #first-header span {
-        float: right;
-        text-align: right;
-        width: 49%;
-      }
-    </style>
     <script type="text/javascript">
       $(document).ready(function () {
         $('#upload_datafile').focus();
       });
     </script>
-  </head>
-  <body>
-    <header id="first-header">
-      <h1>File Upload</h1>
-      <span>
-      Welcome, <%= logged_user %> || 
-        <% if is_admin? %>
-          <a href="/koin/admin">Administer users</a> ||
-        <% end %>
-        <% if is_authenticated? %>
-          <a href="/koin/show">Show my files</a> ||
-          <a href="/login">Log In As Another User</a>
-        <% else %>
-          <a href="/login">Log In</a>
-        <% end %>
-      </span>
-    </header>
     <% if @df && @user.id == @df.creator_id %>
     <header>
       File saved under token <%= @df.token_id %>
@@ -66,5 +29,4 @@
         <%= submit_tag "Upload" %>
       <% end %>
     </div>
-  </body>
-</html>
+

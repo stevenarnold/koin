@@ -1,27 +1,10 @@
 <html>
   <head>
     <title>Edit Resource</title>
-    <style type="text/css">
-      #first-header {
-        clear: both;
-        overflow: auto;
-        height: 1%;
-      }
-      #first-header h1 {
-        float: left;
-        text-align: left;
-        width: 49%;
-      }
-      #first-header span {
-        float: right;
-        text-align: right;
-        width: 49%;
-      }
-    </style>
   </head>
   <body>
     <header id="first-header">
-      <h1>File Upload</h1>
+      <h1><%= @action %></h1>
       <span>
         Welcome, <%= @user.username %> || 
         <% if @user.username == 'guest' %>

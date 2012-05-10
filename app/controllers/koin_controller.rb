@@ -4,9 +4,15 @@ class KoinController < ApplicationController
   layout "application"
   
   before_filter :setup
-  before_filter :get_user_from_cookie, :only => [:download, :edit, :uploadFile, :show, :index]
+  before_filter :get_user_from_cookie, :only => [:download, :edit,
+                      :uploadFile, :show, :index, :admin]
   before_filter :get_token, :only => :download
   before_filter :get_datafile_from_token, :only => :edit
+  before_filter :get_action
+  
+  def get_action
+    @action = "File Upload"
+  end
 
   def initadmin
     if params[:admin_password] != params[:repeat_password]
@@ -104,6 +110,7 @@ class KoinController < ApplicationController
   #   - View any files posted by others users for logged-in users;
   #   - View any files posted by guests
   def show
+    @action= "View Files"
     if !@user.p_admin && params[:user] && params[:user] != @user.username
       session[:next_action] = 'show'
       redirect_to :controller => :login, :action => :index

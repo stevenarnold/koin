@@ -16,4 +16,8 @@ class ApplicationController < ActionController::Base
       @user = Users.find_by_username('guest')
     end
   end
+  
+  def get_user_from_param_id
+    @target_user = params[:id] ? Users.find(params[:id]) : Users.find(params[:users][:id]) 
+  end
 end

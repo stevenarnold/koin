@@ -1,8 +1,13 @@
-<h1>Edit Settings for <%= @user.username %></h1>
-<%= form_for @user do |f| %>
+  <h2>
+  <% if flash[:notice] %>
+  <%= flash[:notice] %>
+  <% end %>
+  </h2>
+<%= form_for @target_user do |f| %>
   <div>
     <%= f.label "Username:" %>
-    <%= @user.username %>
+    <%= f.hidden_field :username %>
+    <%= @target_user.username %>
   </div>
   <div>
     <%= f.label "Password:" %>
