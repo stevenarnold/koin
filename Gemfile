@@ -8,7 +8,13 @@ gem 'uuid'
 
 gem 'sqlite3', "~> 1.3.6"
 gem 'therubyracer'
-
+gem 'factory_girl_rails'
+group :test, :development do
+  gem "rspec-rails"
+end
+gem "cucumber"
+gem "webrat"
+gem "capybara"
 
 # Gems used only for assets and not required
 # in production environments by default.
