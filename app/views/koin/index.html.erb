@@ -5,7 +5,7 @@
     </script>
     <% if @df && @user.id == @df.creator_id %>
     <header>
-      File saved under token <%= @df.token_id %>
+    File saved under token <%= @df.token_id %> [<a href="http://<%= koin_host %><%= koin_port == '80' ? '' : ':' + koin_port %>/token/<%= @df.token_id %>">link</a>]
     </header>
     <% else %>
       <% if @token %>

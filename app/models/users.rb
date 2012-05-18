@@ -30,4 +30,9 @@ class Users < ActiveRecord::Base
     attributes.delete(:passwd)
     super(attributes)
   end
+  
+  def can_download(data_file)
+    # Later this will check permissions
+    true
+  end
 end

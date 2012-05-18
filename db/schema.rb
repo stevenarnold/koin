@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120223203213) do
+ActiveRecord::Schema.define(:version => 20120516202921) do
 
   create_table "data_files", :force => true do |t|
     t.string   "digest"
