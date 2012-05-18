@@ -1,5 +1,10 @@
 Given /^I am on the (.+) page$/ do |page_name|
-  eval("visit #{page_name}_path")
+  case page_name
+  when 'home'
+    visit '/'
+  else
+    eval("visit #{page_name}_path")
+  end
 end
 
 Given /^the server allows guest uploads$/ do

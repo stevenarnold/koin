@@ -12,8 +12,8 @@ gem 'factory_girl_rails'
 group :test, :development do
   gem "rspec-rails"
 end
-gem "cucumber"
-gem "webrat"
+gem "cucumber-rails"
+# gem "webrat"
 gem "capybara"
 
 # Gems used only for assets and not required

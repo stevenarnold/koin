@@ -5,8 +5,8 @@ Koin::Application.routes.draw do
 
   root :to => 'koin#index'
 
-  match '/' => 'koin#index'
-  match 'index/' => 'koin#index'
+  match '/' => 'koin#index', :as => :home
+  match 'index/'map => 'koin#index'
   match 'koin/index' => 'koin#index'
   match 'koin/uploadFile' => 'koin#uploadFile'
   match 'edit/:token' => 'koin#edit'
