@@ -129,7 +129,14 @@ class KoinController < ApplicationController
   end
 
   def uploadFile
+    # Figure out the available space for this user
+    if (@user.quota != 0)
+      available = @user.quota - @user.used_quota
+    else
+      available = null
+    end
     @df = DataFile.new
+    upload = params[:upload]
     parm = params[:download_perms] || 'anyone'
     case parm
     when 'me'
@@ -146,7 +153,7 @@ class KoinController < ApplicationController
       @df.p_upon_token_presentation = true
     end
     @df.creator_id = @user.id
-    @df.capture_file(params[:upload])
+    @df.capture_file(upload, available)
     @df.save
     respond_to do |format|
       format.html {

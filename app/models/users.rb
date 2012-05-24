@@ -35,4 +35,13 @@ class Users < ActiveRecord::Base
     # Later this will check permissions
     true
   end
+  
+  def get_quota
+    Users.where("id = ?", self.id).sum('quota')
+  end
+  
+  def used_quota
+    # This is the sum of the size of the files created by this user.
+    DataFile.where("id = ?", self.id).sum('size')
+  end
 end
