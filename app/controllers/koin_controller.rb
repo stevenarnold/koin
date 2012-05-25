@@ -133,7 +133,7 @@ class KoinController < ApplicationController
     if (@user.quota != 0)
       available = @user.quota - @user.used_quota
     else
-      available = null
+      available = nil
     end
     @df = DataFile.new
     upload = params[:upload]

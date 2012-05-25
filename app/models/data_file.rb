@@ -6,8 +6,9 @@ class DataFile < ActiveRecord::Base
   attr_accessible :path, :digest, :token_id
   
   def capture_file(upload, available)
+    breakpoint
     name =  upload['datafile'].original_filename
-    directory = "public/data"
+    directory = "#{Rails.root}/public/data"
     # create the file path
     self.path = File.join(directory, name)
     # write the file
