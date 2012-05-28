@@ -1,3 +1,7 @@
+And /I am not logged in/ do
+  visit '/'
+end
+
 Given /^I am on the (.+) page$/ do |page_name|
   case page_name
   when 'home'
@@ -8,11 +12,12 @@ Given /^I am on the (.+) page$/ do |page_name|
 end
 
 Given /^the server allows guest uploads$/ do
-  pending # express the regexp above with the code you wish you had
+  Koin::Application::ALLOW_GUEST = true
 end
 
-Then /^I should see "([^"]*)"$/ do |arg1|
-  pending # express the regexp above with the code you wish you had
+Then /^I should see "([^"]*)"$/ do |text|
+  # regexp = Regexp.new(text)
+  page.has_content?(text)
 end
 
 When /^a user goes to the homepage, the they should see a login prompt$/ do

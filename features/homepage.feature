@@ -5,13 +5,13 @@ Feature: Homepage
   
   Scenario: Server allows guest uploads
     
-    Given I am on the home page
-    And the server allows guest uploads
+    Given the server allows guest uploads
+    And I am not logged in
     Then I should see "File Upload"
     
   Scenario: Server does not allow guest uploads
   
-    When a user goes to the homepage, the they should see a login prompt
-    And the server does not allow guest uploads
+    Given the server does not allow guest uploads
+    And I am not logged in
     Then I should see "Please log in"
     
