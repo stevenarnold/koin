@@ -37,7 +37,7 @@ class Users < ActiveRecord::Base
   end
   
   def get_quota
-    Users.where("id = ?", self.id).sum('quota')
+    Users.where("id = ?", self.id)[0].quota * 1024 * 1024 * 1024
   end
   
   def used_quota

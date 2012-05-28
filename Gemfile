@@ -11,10 +11,13 @@ gem 'therubyracer'
 gem 'factory_girl_rails'
 group :test, :development do
   gem "rspec-rails"
+  gem 'turn', '< 0.8.3'
 end
-gem "cucumber-rails"
-# gem "webrat"
 gem "capybara"
+gem "cucumber-rails"
+gem 'database_cleaner', '0.7.0'
+gem 'minitest'
+# gem "webrat"
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -33,9 +36,4 @@ gem 'jquery-rails'
 # gem 'capistrano'
 
 # To use debugger
-# gem 'ruby-debug19', :require => 'ruby-debug'
-
-group :test do
-  # Pretty printed test output
-  gem 'turn', :require => false
-end
+gem 'ruby-debug19', :require => 'ruby-debug'

@@ -131,7 +131,7 @@ class KoinController < ApplicationController
   def uploadFile
     # Figure out the available space for this user
     if (@user.quota != 0)
-      available = @user.quota - @user.used_quota
+      available = @user.get_quota - @user.used_quota
     else
       available = nil
     end
