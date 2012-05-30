@@ -13,12 +13,12 @@ class DataFile < ActiveRecord::Base
     # write the file
     puts "available = #{available}"
     post = File.open(self.path, "wb")
-    post.write(upload['datafile'].read(available))
+    file_content = upload['datafile'].read(available)
+    post.write(file_content)
     post.close
-    puts "done writing"
     # Get the MD5 of the file and return the fetch key
     self.size = File.stat(self.path).size
-    self.digest = Digest::MD5.hexdigest(file_contents)
+    self.digest = Digest::MD5.hexdigest(file_content)
     self.token_id = UUID.new.generate
     # Quota handling.  Start by just getting the size.
   end  

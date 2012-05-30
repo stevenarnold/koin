@@ -1,3 +1,7 @@
+require 'rspec/expectations'
+require 'rubygems'
+require 'ruby-debug'
+
 And /I am not logged in/ do
   visit '/'
 end
@@ -15,16 +19,20 @@ Given /^the server allows guest uploads$/ do
   Koin::Application::ALLOW_GUEST = true
 end
 
+Given /^the server does not allow guest uploads$/ do
+  Koin::Application::ALLOW_GUEST = false
+end
+
 Then /^I should see "([^"]*)"$/ do |text|
-  # regexp = Regexp.new(text)
-  page.has_content?(text)
+  #debugger
+  page.has_content?(text).should == true
+end
+
+Then /^I should not see "([^"]*)"$/ do |text|
+  !page.has_content?(text)
 end
 
 When /^a user goes to the homepage, the they should see a login prompt$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-When /^the server does not allow guest uploads$/ do
   pending # express the regexp above with the code you wish you had
 end
 

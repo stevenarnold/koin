@@ -9,6 +9,14 @@ class KoinController < ApplicationController
   before_filter :get_token, :only => :download
   before_filter :get_datafile_from_token, :only => :edit
   before_filter :get_action
+  before_filter :require_logon
+  
+  def require_logon
+    #debugger
+    if ((!@user || @user.username == 'guest') && !Koin::Application::ALLOW_GUEST)
+      redirect_to :controller => :login, :action => :index
+    end
+  end
   
   def get_action
     @action = "File Upload"

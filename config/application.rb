@@ -46,6 +46,6 @@ module Koin
     config.assets.version = '1.0'
     
     # Are guests allowed?
-    ALLOW_GUEST = true
+    ALLOW_GUEST = false
   end
 end
