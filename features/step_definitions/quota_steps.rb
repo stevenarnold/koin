@@ -1,9 +1,16 @@
+require 'rspec/expectations'
+require 'rubygems'
+require 'ruby-debug'
+
 Given /^I am logged in as a guest with a quota$/ do
-  pending # express the regexp above with the code you wish you had
+  Koin::Application::ALLOW_GUEST = true
+  visit '/'
 end
 
 Given /^I upload a file less than my quota$/ do
-  pending # express the regexp above with the code you wish you had
+  attach_file("upload[datafile]", File.join(Rails.root, 'features',
+    'upload_files', '6mbfile.txt'))
+  click_button "Upload"
 end
 
 Given /^I upload a file greater than my quota$/ do

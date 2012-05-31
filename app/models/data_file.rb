@@ -13,7 +13,11 @@ class DataFile < ActiveRecord::Base
     # write the file
     puts "available = #{available}"
     post = File.open(self.path, "wb")
-    file_content = upload['datafile'].read(available)
+    amt_to_read = 10000000
+    file_content = ""
+    while new_content = upload['datafile'].read(amt_to_read)
+      file_content += new_content
+    end
     post.write(file_content)
     post.close
     # Get the MD5 of the file and return the fetch key

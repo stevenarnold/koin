@@ -4,6 +4,9 @@ Feature: Quota
   quota.  If the quota is set to zero, that means there is no quota, so any 
   upload will suffice to ensure that this works.
   
+  Background:
+    Given cucumber is properly initialized
+  
   Scenario: Upload a file less than quota
     Given I am logged in as a guest with a quota
     And I upload a file less than my quota

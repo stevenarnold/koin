@@ -17,7 +17,7 @@ end
 
 Given /^the server allows guest uploads$/ do
   Koin::Application::ALLOW_GUEST = true
-end
+end                                             
 
 Given /^the server does not allow guest uploads$/ do
   Koin::Application::ALLOW_GUEST = false
