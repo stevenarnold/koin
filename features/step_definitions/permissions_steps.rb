@@ -23,11 +23,6 @@ Given /^the server does not allow guest uploads$/ do
   Koin::Application::ALLOW_GUEST = false
 end
 
-Then /^I should see "([^"]*)"$/ do |text|
-  #debugger
-  page.has_content?(text).should == true
-end
-
 Then /^I should not see "([^"]*)"$/ do |text|
   !page.has_content?(text)
 end

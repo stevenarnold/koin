@@ -4,6 +4,10 @@ require 'uuid'
 class DataFile < ActiveRecord::Base
   belongs_to :user
   attr_accessible :path, :digest, :token_id
+
+  class OverQuotaError < StandardError
+    attr_accessor :available
+  end
   
   def capture_file(upload, available)
     name =  upload['datafile'].original_filename
@@ -17,6 +21,9 @@ class DataFile < ActiveRecord::Base
     file_content = ""
     while new_content = upload['datafile'].read(amt_to_read)
       file_content += new_content
+      if file_content.length > available
+        raise DataFile::OverQuotaError, available
+      end
     end
     post.write(file_content)
     post.close

@@ -138,11 +138,7 @@ class KoinController < ApplicationController
 
   def uploadFile
     # Figure out the available space for this user
-    if (@user.quota != 0)
-      available = @user.get_quota - @user.used_quota
-    else
-      available = nil
-    end
+    available = @user.available
     @df = DataFile.new
     upload = params[:upload]
     parm = params[:download_perms] || 'anyone'
@@ -161,8 +157,14 @@ class KoinController < ApplicationController
       @df.p_upon_token_presentation = true
     end
     @df.creator_id = @user.id
-    @df.capture_file(upload, available)
-    @df.save
+    begin
+      #debugger
+      @df.capture_file(upload, available)
+      @df.save!
+    rescue DataFile::OverQuotaError => e
+      @df = nil
+      @error = "Can't upload file: Quota exceeded"
+    end
     respond_to do |format|
       format.html {
         render :index

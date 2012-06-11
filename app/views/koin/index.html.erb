@@ -3,7 +3,7 @@
         $('#upload_datafile').focus();
       });
     </script>
-    <% if @df && @user.id == @df.creator_id %>
+    <% if !@error && @df && @user.id == @df.creator_id %>
     <header>
     File saved under token <%= @df.token_id %> [<a href="http://<%= koin_host %><%= koin_port == '80' ? '' : ':' + koin_port %>/token/<%= @df.token_id %>">link</a>]
     </header>
@@ -12,6 +12,11 @@
       <header>
         Token <%= @token %> not found or permission not granted
       </header>
+      <% end %>
+      <% if @error %>
+      <header>
+        Command failed: <%= @error %>
+      <header>
       <% end %>
     <% end %>
     <div class="spacer">

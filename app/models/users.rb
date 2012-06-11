@@ -1,11 +1,15 @@
 require 'digest/md5'
 
 class Users < ActiveRecord::Base
-  attr_accessible :username, :p_search_all, :p_admin, :quota
+  attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
   has_many :data_files
   
   def _gensalt(len=8)
     (0...len).map{65.+(rand(25)).chr}.join
+  end
+  
+  def passwd=(password)
+    @passwd = password
   end
 
   def save
@@ -25,7 +29,7 @@ class Users < ActiveRecord::Base
     self.id == df.creator_id
   end
 
-  def initialize(attributes)
+  def initialize(attributes={})
     @passwd = attributes[:passwd]
     attributes.delete(:passwd)
     super(attributes)
@@ -37,11 +41,20 @@ class Users < ActiveRecord::Base
   end
   
   def get_quota
-    Users.where("id = ?", self.id)[0].quota * 1024 * 1024 * 1024
+    Users.where("id = ?", self.id)[0].quota * 1024 * 1024
   end
   
   def used_quota
     # This is the sum of the size of the files created by this user.
     DataFile.where("id = ?", self.id).sum('size')
+  end
+  
+  def available
+    # Return the space available for this user, in bytes
+    if quota != 0
+      get_quota - used_quota
+    else
+      nil
+    end
   end
 end

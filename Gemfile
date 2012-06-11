@@ -8,12 +8,13 @@ gem 'uuid'
 
 gem 'sqlite3', "~> 1.3.6"
 gem 'therubyracer'
-gem 'factory_girl_rails'
 group :test, :development do
   gem "rspec-rails"
   gem 'turn', '< 0.8.3'
+  gem 'factory_girl_rails'
 end
 gem "capybara"
+gem "launchy"
 gem "cucumber-rails"
 gem 'database_cleaner', '0.7.0'
 gem 'minitest'

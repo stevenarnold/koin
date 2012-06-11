@@ -8,9 +8,10 @@ Feature: Quota
     Given cucumber is properly initialized
   
   Scenario: Upload a file less than quota
-    Given I am logged in as a guest with a quota
+    Given I am logged in as a guest with a quota      
     And I upload a file less than my quota
     Then I should see "File saved under token"
+    And the database size value for "1mbfile.txt" should be the same as the file size
   
   Scenario: Upload a file that exceeds quota
     Given I am logged in as a guest with a quota
