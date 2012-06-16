@@ -15,9 +15,9 @@ class DataFile < ActiveRecord::Base
     # create the file path
     self.path = File.join(directory, name)
     # write the file
-    puts "available = #{available}"
     post = File.open(self.path, "wb")
-    amt_to_read = 10000000
+    amt_to_read = 1000000
+    # debugger
     file_content = ""
     while new_content = upload['datafile'].read(amt_to_read)
       file_content += new_content

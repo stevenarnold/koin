@@ -13,6 +13,7 @@ class Users < ActiveRecord::Base
   end
 
   def save
+    # debugger
     if @passwd != nil
       self.salt = _gensalt
       self.enc_passwd = Digest::MD5.hexdigest(@passwd + self.salt)
@@ -29,10 +30,14 @@ class Users < ActiveRecord::Base
     self.id == df.creator_id
   end
 
-  def initialize(attributes={})
-    @passwd = attributes[:passwd]
-    attributes.delete(:passwd)
-    super(attributes)
+  def initialize(*args)
+    #debugger
+    attributes = args[0]
+    if attributes
+      @passwd = attributes[:passwd]
+      attributes.delete(:passwd)
+    end
+    super(*args)
   end
   
   def can_download(data_file)
@@ -54,7 +59,7 @@ class Users < ActiveRecord::Base
     if quota != 0
       get_quota - used_quota
     else
-      nil
+      Float::INFINITY
     end
   end
 end

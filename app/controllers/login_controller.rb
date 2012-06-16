@@ -4,6 +4,7 @@ class LoginController < ApplicationController
 
   #FIXME neither a cookie nor an expiration are put here presently
   def auth
+    # debugger
     user, pass = params[:user], params[:pass]
     if user && pass
       dbuser = Users.find_by_username(user)

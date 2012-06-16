@@ -36,7 +36,8 @@ And /^the database size value for "([^"]*)" should be the same as the file size$
   fsize.should == dbsize
 end
 
-Given /^I upload a file greater than my quota$/ do
+Given /^I upload a file( greater than my quota)?$/ do |text|
+  # save_and_open_page
   attach_file("upload[datafile]", large_file)
   click_button "Upload"
 end
@@ -44,22 +45,26 @@ end
 Given /^I am logged in as an admin with a quota$/ do
   # @admin = FactoryGirl.create(:users, :username => "test", :passwd => "secret",
   #     :p_admin => true, :quota => 12)
-  # @admin = Users.create!(:username => "test", :passwd => "secret",
+  # @admin = Users.create!(:username => "test", :passwd => "pass",
   #                       :p_admin => true, :quota => 12)
-  @admin = FactoryGirl.create(:users, username: "test", passwd: "pass")
+  @admin = FactoryGirl.create(:users, username: "test",
+                         enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
+                         p_admin: true, quota: 2, salt: "NFTCRHCJ")
   visit("/login/index")
-  save_and_open_page
+  fill_in("user", :with => 'test')
+  fill_in("pass", :with => 'pass')
   #debugger
-  fill_in(:user, :with => 'test')
-  fill_in(:pass, :with => 'pass')
   click_button "Submit"
 end
 
 Given /^I am logged in as user with no quota$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Given /^I upload a file$/ do
-  pending # express the regexp above with the code you wish you had
+  @admin = FactoryGirl.create(:users, username: "test",
+                         enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
+                         p_admin: true, quota: 0, salt: "NFTCRHCJ")
+  visit("/login/index")
+  fill_in("user", :with => 'test')
+  fill_in("pass", :with => 'pass')
+  #debugger
+  click_button "Submit"
 end
 
