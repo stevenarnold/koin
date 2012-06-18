@@ -25,6 +25,6 @@ Feature: Quota
   
   Scenario: Upload a file for a user with no quota
     Given I am logged in as user with no quota
-    And I upload a file
+    And I upload a large file
     Then I should see "File saved under token"
     

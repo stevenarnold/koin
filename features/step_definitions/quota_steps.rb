@@ -16,6 +16,16 @@ def large_file
   File.join(Rails.root, 'features', 'upload_files', '3mbfile.txt')
 end
 
+def upload_large_file
+  attach_file("upload[datafile]", large_file)
+  click_button "Upload"
+end
+
+def upload_small_file
+  attach_file("upload[datafile]", small_file)
+  click_button "Upload"
+end
+
 Given /^I am logged in as a guest with a quota$/ do
   Koin::Application::ALLOW_GUEST = true
   visit '/'
@@ -37,9 +47,11 @@ And /^the database size value for "([^"]*)" should be the same as the file size$
 end
 
 Given /^I upload a file( greater than my quota)?$/ do |text|
-  # save_and_open_page
-  attach_file("upload[datafile]", large_file)
-  click_button "Upload"
+  upload_large_file
+end
+
+Given /^I upload a large file$/ do
+  upload_large_file
 end
 
 Given /^I am logged in as an admin with a quota$/ do
@@ -60,7 +72,7 @@ end
 Given /^I am logged in as user with no quota$/ do
   @admin = FactoryGirl.create(:users, username: "test",
                          enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
-                         p_admin: true, quota: 0, salt: "NFTCRHCJ")
+                         p_admin: false, quota: 0, salt: "NFTCRHCJ")
   visit("/login/index")
   fill_in("user", :with => 'test')
   fill_in("pass", :with => 'pass')

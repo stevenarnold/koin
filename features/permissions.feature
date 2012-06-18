@@ -5,36 +5,33 @@ Feature: Permissions
   
   Scenario: Failed log in
   
-    A user entering an incorrect username and password should see the standard
-    upload prompt if guest access is turned on.
+    A user should see a login prompt if they enter a wrong password
     
-    Given I have chosen to log in
-    When I sign up with invalid details
-    Then I should see an error message and the upload prompt
+    Given I am on the login page
+    When I sign in with invalid details
+    Then I should see "Incorrect username or password"
+    And I should see "Please Log In"
     
-  Scenario: Failed log in guest access off
-  
-    A user should see a login prompt if they enter a wrong password and guest
-    access is turned off.
-    
-    Given I have chosen to log in
-    When I sign up with invalid details
-    Then I should see an error message and the login screen
-    
-  Scenario: File viewing
+  Scenario: File viewing for non-admins
   
     A non-admin user should be able to manage only their own files, while an 
     admin can manage all files.
     
     Given I am not an admin user
-    And I view my files
-    Then I should not see a file that is not mine
+    And another user has uploaded a file
+    And I view "test's" files
+    Then I should not see "1mbfile.txt"
+    
+  Scenario: File viewing for admins
+  
+    An admin can see all files, whether owned by him/her or not
     
     Given I am an admin user
-    And I view my files
-    Then I should see a file that is not mine
+    And another user has uploaded a file
+    And I view "admin's" files
+    Then I should see "1mbfile.txt"
     
-  Scenario: File download
+  Scenario: Invalid file download
   
     If a file was saved for a particular user, the user must enter a correct
     password to download the file.  Future downloads in the same session
@@ -43,6 +40,8 @@ Feature: Permissions
     Given I choose to download a file that was saved for a particular user
     When I enter invalid details
     Then I should see the login page
+
+  Scenario: Valid file download
     
     Given I choose to download a file that was saved for a particular user
     When I enter correct details
