@@ -18,4 +18,5 @@ Feature: Homepage
     And I am not logged in
     Then I should see "Please Log In"
     And I should not see "File Upload"
+    And I should not see "Welcome, guest"
     

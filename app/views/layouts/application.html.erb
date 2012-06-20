@@ -12,8 +12,13 @@
       <h1><%= @action %></h1>
       <span>
         <span>
-        Welcome, <%= logged_user %> || 
-          <a href="/">Share files</a> ||
+        <% if logged_user != "guest" %>
+        Welcome, <%= logged_user %> ||
+        <a href="/">Share files</a> ||
+        <% elsif Koin::Application::ALLOW_GUEST == true %>
+        Welcome, <%= logged_user %> ||
+        <a href="/">Share files</a> ||
+        <% end %>
           <% if is_admin? %>
             <a href="/koin/admin">Administer users</a> ||
           <% end %>

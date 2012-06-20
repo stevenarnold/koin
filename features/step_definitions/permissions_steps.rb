@@ -9,7 +9,7 @@ def log_in(user, pass)
   click_button "Submit"
 end
 
-And /I am not logged in/ do |text|
+And /I am not logged in/ do
   visit '/'
 end
 
@@ -37,7 +37,7 @@ Given /^the server does not allow guest uploads$/ do
 end
 
 Then /^I should not see "([^"]*)"$/ do |text|
-  !page.has_content?(text)
+  page.has_content?(text).should == false
 end
 
 When /^I sign in with invalid details$/ do
@@ -59,12 +59,17 @@ Given /^I am not an admin user$/ do
                          quota: 2, salt: "NFTCRHCJ")
 end
 
-And /^another user has uploaded a file$/ do
+And /^another user has uploaded a file( .+)?$/ do |condition|
   @other_uploader = FactoryGirl.create(:users, username: "other",
                          enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
                          quota: 2, salt: "NFTCRHCJ")
   log_in('other', 'pass')
-  upload_small_file
+  # debugger
+  if condition == " for viewing by anyone"
+    upload_small_file(anyone: true)
+  else
+    upload_small_file
+  end
 end
 
 And /^I view "([^']+)'s" files$/ do |user|
@@ -72,47 +77,15 @@ And /^I view "([^']+)'s" files$/ do |user|
   click_link "Show my files"
 end
 
-Then /^I should see an error message and the upload prompt$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-When /^a user goes to the homepage, then they should see a login prompt$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Given /^I have chosen to log in$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^I should see an error message and the login screen$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^I should not see a file that is not mine$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^I should see a file that is not mine$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
 Given /^I choose to download a file that was saved for a particular user$/ do
-  pending # express the regexp above with the code you wish you had
+  pending
 end
 
-When /^I enter invalid details$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^I should see the login page$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-When /^I enter correct details$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^I should see the acknowledgement page$/ do
-  pending # express the regexp above with the code you wish you had
+When /^I enter ([^ ]+) details/ do |detail_type|
+  pending
+  case detail_type
+  when "invalid"
+  when "correct"
+  end
 end
 

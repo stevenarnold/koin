@@ -118,17 +118,20 @@ class KoinController < ApplicationController
   #   - View any files posted by others users for logged-in users;
   #   - View any files posted by guests
   def show
+    # debugger
     @action= "View Files"
     if !@user.p_admin && params[:user] && params[:user] != @user.username
       session[:next_action] = 'show'
       redirect_to :controller => :login, :action => :index
       return
     end
+    # debugger
     unless @guest
       if @user.p_admin
         @files = DataFile.find(:all)
       else
-        @files = DataFile.where("creator_id = ?", @user.id)
+        # debugger
+        @files = DataFile.where("creator_id = ? OR p_upon_token_presentation = 't'", @user.id)
       end
       render :show
     else

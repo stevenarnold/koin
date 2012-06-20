@@ -21,7 +21,12 @@ def upload_large_file
   click_button "Upload"
 end
 
-def upload_small_file
+def upload_small_file(anyone=false)
+  if anyone
+    choose("download_perms_anyone")
+  else 
+    choose("download_perms_me")
+  end
   attach_file("upload[datafile]", small_file)
   click_button "Upload"
 end

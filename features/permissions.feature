@@ -3,6 +3,9 @@ Feature: Permissions
   Users should not be able take actions that they don't have permission
   to do.
   
+  Background:
+    Given cucumber is properly initialized
+  
   Scenario: Failed log in
   
     A user should see a login prompt if they enter a wrong password
@@ -18,7 +21,7 @@ Feature: Permissions
     admin can manage all files.
     
     Given I am not an admin user
-    And another user has uploaded a file
+    And another user has uploaded a file for themselves only
     And I view "test's" files
     Then I should not see "1mbfile.txt"
     
@@ -31,6 +34,12 @@ Feature: Permissions
     And I view "admin's" files
     Then I should see "1mbfile.txt"
     
+  Scenario: Files for anybody should be visible to non-admin users
+    Given I am not an admin user
+    And another user has uploaded a file for viewing by anyone
+    And I view "test's" files
+    Then I should see "1mbfile.txt"
+
   Scenario: Invalid file download
   
     If a file was saved for a particular user, the user must enter a correct

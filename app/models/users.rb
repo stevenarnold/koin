@@ -3,6 +3,7 @@ require 'digest/md5'
 class Users < ActiveRecord::Base
   attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
   has_many :data_files
+  before_save :set_up_passwd
   
   def _gensalt(len=8)
     (0...len).map{65.+(rand(25)).chr}.join
@@ -12,13 +13,12 @@ class Users < ActiveRecord::Base
     @passwd = password
   end
 
-  def save
+  def set_up_passwd
     # debugger
     if @passwd != nil
       self.salt = _gensalt
       self.enc_passwd = Digest::MD5.hexdigest(@passwd + self.salt)
     end
-    super
   end
 
   def is_admin
