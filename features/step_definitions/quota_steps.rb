@@ -4,7 +4,7 @@ require 'ruby-debug'
 require 'factory_girl_rails'
 
 FactoryGirl.define do
-  factory :users do
+  factory :user do
   end
 end
 
@@ -60,11 +60,7 @@ Given /^I upload a large file$/ do
 end
 
 Given /^I am logged in as an admin with a quota$/ do
-  # @admin = FactoryGirl.create(:users, :username => "test", :passwd => "secret",
-  #     :p_admin => true, :quota => 12)
-  # @admin = Users.create!(:username => "test", :passwd => "pass",
-  #                       :p_admin => true, :quota => 12)
-  @admin = FactoryGirl.create(:users, username: "test",
+  @admin = FactoryGirl.create(:user, username: "test",
                          enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
                          p_admin: true, quota: 2, salt: "NFTCRHCJ")
   visit("/login/index")
@@ -75,7 +71,7 @@ Given /^I am logged in as an admin with a quota$/ do
 end
 
 Given /^I am logged in as user with no quota$/ do
-  @admin = FactoryGirl.create(:users, username: "test",
+  @admin = FactoryGirl.create(:user, username: "test",
                          enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
                          p_admin: false, quota: 0, salt: "NFTCRHCJ")
   visit("/login/index")

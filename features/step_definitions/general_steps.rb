@@ -3,11 +3,11 @@ require 'rubygems'
 require 'ruby-debug'
 
 Given /^cucumber is properly initialized$/ do
-  u = Users.new(:passwd => 'pass')
+  u = User.new(:passwd => 'pass')
   u.username = 'admin'
   u.p_admin = 't'
   u.save!
-  g = Users.new(:passwd => 'pass')
+  g = User.new(:passwd => 'pass')
   g.username = 'guest'
   g.quota = 2
   g.save!

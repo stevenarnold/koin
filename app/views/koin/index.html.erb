@@ -28,8 +28,10 @@
         <% if !@guest %>
         Allow downloads for this file from:<br />
         <%= radio_button_tag :download_perms, 'me' %>Only Me<br />
-        <%= radio_button_tag :download_perms, 'users' %>Any Logged In User<br />
         <%= radio_button_tag :download_perms, 'anyone', checked: true %>Anyone<br />
+        <%= radio_button_tag :download_perms, 'users' %>Any Logged In User<br />
+        <%= radio_button_tag :download_perms, 'specific_users' %>These Users:
+        <%= select_tag 'users[selected][]', options_from_collection_for_select(@users, 'id', 'username'), { :multiple => true, :size =>5, :id => "users_selected" } %><br />
         <% end %>
         <%= submit_tag "Upload" %>
       <% end %>

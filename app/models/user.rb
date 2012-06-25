@@ -1,8 +1,12 @@
 require 'digest/md5'
 
-class Users < ActiveRecord::Base
-  attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
+class User < ActiveRecord::Base
+  has_many :permitted_uses
+  has_many :viewable_files, :class_name => 'DataFile', :foreign_key => "data_file_id",
+           :through => :permitted_uses
   has_many :data_files
+  
+  attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
   before_save :set_up_passwd
   
   def _gensalt(len=8)
@@ -46,7 +50,7 @@ class Users < ActiveRecord::Base
   end
   
   def get_quota
-    Users.where("id = ?", self.id)[0].quota * 1024 * 1024
+    User.where("id = ?", self.id)[0].quota * 1024 * 1024
   end
   
   def used_quota

@@ -13,7 +13,7 @@
             <td><%= File.basename(file.path) %></td>
             <td><a href="<%= "http://#{request.host_with_port}/token/#{file.token_id}" %>"><%= File.basename(file.path) %></a></td>
             <td><%= File.size(file.path) %></td>
-            <td><%= Users.find(file.creator_id).username %></td>
+            <td><%= User.find(file.creator_id).username %></td>
             <td>&nbsp;</td>
             <td><submit_tag "Delete"></td>
           </tr>

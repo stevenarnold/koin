@@ -8,6 +8,7 @@ class KoinController < ApplicationController
                       :uploadFile, :show, :index, :admin]
   before_filter :get_token, :only => :download
   before_filter :get_datafile_from_token, :only => :edit
+  before_filter :get_users #, :only => [:index, :show, :download, :edit, :uploadFile]
   before_filter :get_action
   before_filter :require_logon
   
@@ -21,6 +22,11 @@ class KoinController < ApplicationController
   def get_action
     @action = "File Upload"
   end
+  
+  def get_users
+    # debugger
+    @users = User.order(:username)
+  end
 
   def initadmin
     if params[:admin_password] != params[:repeat_password]
@@ -28,7 +34,7 @@ class KoinController < ApplicationController
       render :create_admin
       return
     end
-    u = Users.new(:passwd => params[:admin_password])
+    u = User.new(:passwd => params[:admin_password])
     u.username = params[:admin_username]
     u.p_admin = 't'
     u.save!
@@ -39,7 +45,7 @@ class KoinController < ApplicationController
     session[:createadmin] ||= false
     if session[:createadmin]
       return
-    elsif Users.where("p_admin = 't'").length == 0
+    elsif User.where("p_admin = 't'").length == 0
       if params[:initial_password] == 'LetsGetSetup'
         @insetup = true
         session[:createadmin] = true
@@ -65,6 +71,7 @@ class KoinController < ApplicationController
   end
   
   def index
+    # debugger
     case 
     when session[:next_action] == 'show'
       delete session[:next_action]
@@ -158,6 +165,14 @@ class KoinController < ApplicationController
       @df.p_only_creator = false
       @df.p_any_logged_user = false
       @df.p_upon_token_presentation = true
+    when 'specific_users'
+      @df.p_only_creator = false
+      @df.p_any_logged_user = false
+      @df.p_upon_token_presentation = false
+      params[:users][:selected].each do |id|
+        # debugger
+        @df.viewers << User.find(id.to_i)
+      end
     end
     @df.creator_id = @user.id
     begin
@@ -176,16 +191,16 @@ class KoinController < ApplicationController
   end
   
   def admin
-    @users = Users.find_by_sql("SELECT    u.id, u.username, count(df.digest) AS num,
-                                          sum(df.size) AS size, u.quota
-                                FROM      users u
-                                LEFT JOIN data_files df
-                                ON        u.id = df.creator_id
-                                UNION ALL
-                                SELECT    u.id, u.username, 0 AS num, 0 AS size, u.quota
-                                FROM      users u
-                                WHERE     u.id NOT IN (SELECT    count(df.creator_id)
-                                                       FROM      data_files df)
-                                ORDER BY  u.username")
+    @users = User.find_by_sql("SELECT    u.id, u.username, count(df.digest) AS num,
+                                         sum(df.size) AS size, u.quota
+                               FROM      users u
+                               LEFT JOIN data_files df
+                               ON        u.id = df.creator_id
+                               UNION ALL
+                               SELECT    u.id, u.username, 0 AS num, 0 AS size, u.quota
+                               FROM      users u
+                               WHERE     u.id NOT IN (SELECT    count(df.creator_id)
+                                                      FROM      data_files df)
+                               ORDER BY  u.username")
   end
 end

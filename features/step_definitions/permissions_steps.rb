@@ -41,26 +41,26 @@ Then /^I should not see "([^"]*)"$/ do |text|
 end
 
 When /^I sign in with invalid details$/ do
-  @test = FactoryGirl.create(:users, username: "test",
+  @test = FactoryGirl.create(:user, username: "test",
                          enc_passwd: "",
                          quota: 2, salt: "NFTCRHCJ")
   log_in('test', 'foobar')
 end
 
 Given /^I am an admin user$/ do
-  @admin = FactoryGirl.create(:users, username: "admin",
+  @admin = FactoryGirl.create(:user, username: "admin",
                          enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
                          p_admin: true, quota: 2, salt: "NFTCRHCJ")
 end
 
 Given /^I am not an admin user$/ do
-  @test = FactoryGirl.create(:users, username: "test",
+  @test = FactoryGirl.create(:user, username: "test",
                          enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
                          quota: 2, salt: "NFTCRHCJ")
 end
 
 And /^another user has uploaded a file( .+)?$/ do |condition|
-  @other_uploader = FactoryGirl.create(:users, username: "other",
+  @other_uploader = FactoryGirl.create(:user, username: "other",
                          enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
                          quota: 2, salt: "NFTCRHCJ")
   log_in('other', 'pass')

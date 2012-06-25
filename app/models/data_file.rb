@@ -3,6 +3,10 @@ require 'uuid'
 
 class DataFile < ActiveRecord::Base
   belongs_to :user
+  has_many :permitted_uses
+  has_many :viewers, :foreign_key => "user_id",
+  :through => :permitted_uses, :source => :user
+  
   attr_accessible :path, :digest, :token_id
 
   class OverQuotaError < StandardError
@@ -32,5 +36,10 @@ class DataFile < ActiveRecord::Base
     self.digest = Digest::MD5.hexdigest(file_content)
     self.token_id = UUID.new.generate
     # Quota handling.  Start by just getting the size.
-  end  
+  end
+end
+
+class PermittedUse < ActiveRecord::Base
+  belongs_to :user
+  belongs_to :data_file
 end
