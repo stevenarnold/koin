@@ -66,7 +66,7 @@ And /^another user has uploaded a file( .+)?$/ do |condition|
   log_in('other', 'pass')
   # debugger
   if condition == " for viewing by anyone"
-    upload_small_file(anyone: true)
+    upload_small_file(upload_type: "anyone")
   else
     upload_small_file
   end
@@ -77,8 +77,27 @@ And /^I view "([^']+)'s" files$/ do |user|
   click_link "Show my files"
 end
 
-Given /^I choose to download a file that was saved for a particular user$/ do
-  pending
+Given /^I choose to download a file that was saved for ([^ ]+)( user)?$/ do |user_type, user_text|
+  # Create three users, creator, intended, outsider.  Creator creates a file
+  # intended for user intended and not intended for user outsider.
+  @creator = FactoryGirl.create(:user, username: "creator",
+                         enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
+                         quota: 2, salt: "NFTCRHCJ")
+  @intended = FactoryGirl.create(:user, username: "intended",
+                         enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
+                         quota: 2, salt: "NFTCRHCJ")
+  @outsider = FactoryGirl.create(:user, username: "outsider",
+                         enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
+                         quota: 2, salt: "NFTCRHCJ")
+  log_in('creator', 'pass')
+  token = upload_small_file("select_users", [@intended])
+  case user_type
+  when "another"
+    log_in('outsider', 'pass')
+    visit "/token/#{token}"
+  when "myself"
+    visit "/token/#{token}"
+  end
 end
 
 When /^I enter ([^ ]+) details/ do |detail_type|
@@ -86,6 +105,15 @@ When /^I enter ([^ ]+) details/ do |detail_type|
   case detail_type
   when "invalid"
   when "correct"
+  end
+end
+
+Then /^I should see the ([^ ]+) page$/ do |the_page|
+  case the_page
+  when 'login'
+    debugger
+    page.has_content?("Please Log In").should == true
+  when 'acknowledgement'
   end
 end
 

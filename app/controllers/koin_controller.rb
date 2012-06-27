@@ -152,6 +152,7 @@ class KoinController < ApplicationController
     @df = DataFile.new
     upload = params[:upload]
     parm = params[:download_perms] || 'anyone'
+    #debugger
     case parm
     when 'me'
       @df.p_only_creator = true

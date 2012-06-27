@@ -46,13 +46,25 @@ Feature: Permissions
     password to download the file.  Future downloads in the same session
     should not require password re-entry.
     
-    Given I choose to download a file that was saved for a particular user
-    When I enter invalid details
-    Then I should see the login page
+    Given I choose to download a file that was saved for another user
+    Then I should see "not found or permission not granted"
 
   Scenario: Valid file download
     
-    Given I choose to download a file that was saved for a particular user
+    Given I choose to download a file that was saved for another user
+    Then I should see the login page
+    When I enter correct details
+    Then I should see the acknowledgement page
+
+  Scenario: File download for specific user when user is not logged in
+      
+    NOTE: When I try to download a file saved for a particular user and I
+    am not logged in, I should be taken to the login page, then allowed or
+    denied based on whether I am the correct user.
+
+    Given I am not logged in
+    And I choose to download a file that was saved for another user
+    Then I should see the login page
     When I enter correct details
     Then I should see the acknowledgement page
 

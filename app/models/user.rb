@@ -3,7 +3,7 @@ require 'digest/md5'
 class User < ActiveRecord::Base
   has_many :permitted_uses
   has_many :viewable_files, :class_name => 'DataFile', :foreign_key => "data_file_id",
-           :through => :permitted_uses
+           :through => :permitted_uses, :source => :data_file
   has_many :data_files
   
   attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
@@ -45,8 +45,14 @@ class User < ActiveRecord::Base
   end
   
   def can_download(data_file)
-    # Later this will check permissions
-    true
+    # debugger
+    if data_file.p_any_logged_user || data_file.p_upon_token_presentation
+      true
+    elsif viewable_files.include?(data_file)
+      true
+    else
+      false
+    end
   end
   
   def get_quota

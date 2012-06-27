@@ -21,14 +21,24 @@ def upload_large_file
   click_button "Upload"
 end
 
-def upload_small_file(anyone=false)
-  if anyone
+def upload_small_file(upload_type="anyone", for_users=[])
+  # debugger
+  case upload_type
+  when "anyone"
     choose("download_perms_anyone")
-  else 
+  when "me"
     choose("download_perms_me")
+  when "select_users"
+    choose("download_perms_specific_users")
+    select_list = find('#users_selected')
+    for_users.each do |user|
+      select_list.select(user.username)
+    end
   end
   attach_file("upload[datafile]", small_file)
   click_button "Upload"
+  link_text = find("a[href*='token']").native.attributes["href"].value
+  link_text.match(/token\/(.*)/)[1]
 end
 
 Given /^I am logged in as a guest with a quota$/ do
