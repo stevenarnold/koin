@@ -51,10 +51,9 @@ Feature: Permissions
 
   Scenario: Valid file download
     
-    Given I choose to download a file that was saved for another user
-    Then I should see the login page
-    When I enter correct details
-    Then I should see the acknowledgement page
+    Given I am logged in
+    And I choose to download a file that was saved for me by another user
+    Then I should receive a file "1mbfile.txt"
 
   Scenario: File download for specific user when user is not logged in
       

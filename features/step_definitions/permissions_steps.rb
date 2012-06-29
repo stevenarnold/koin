@@ -13,6 +13,11 @@ And /I am not logged in/ do
   visit '/'
 end
 
+Given /^I am logged in$/ do
+  step %{I am not an admin user}
+  log_in('test', 'pass')
+end
+
 Then /^show me the page$/ do
   save_and_open_page
 end
@@ -65,10 +70,13 @@ And /^another user has uploaded a file( .+)?$/ do |condition|
                          quota: 2, salt: "NFTCRHCJ")
   log_in('other', 'pass')
   # debugger
-  if condition == " for viewing by anyone"
-    upload_small_file(upload_type: "anyone")
-  else
-    upload_small_file
+  case condition
+  when " for viewing by anyone"
+    upload_small_file("anyone")
+  when " for themselves only" 
+    upload_small_file("me")
+  when nil
+    upload_small_file("me")
   end
 end
 
@@ -77,7 +85,7 @@ And /^I view "([^']+)'s" files$/ do |user|
   click_link "Show my files"
 end
 
-Given /^I choose to download a file that was saved for ([^ ]+)( user)?$/ do |user_type, user_text|
+Given /^I choose to download a file that was saved for ([^ ]+)(?: user)?$/ do |user_type|
   # Create three users, creator, intended, outsider.  Creator creates a file
   # intended for user intended and not intended for user outsider.
   @creator = FactoryGirl.create(:user, username: "creator",
@@ -100,6 +108,25 @@ Given /^I choose to download a file that was saved for ([^ ]+)( user)?$/ do |use
   end
 end
 
+Given /^I choose to download a file that was saved for me by another user$/ do
+  @creator = FactoryGirl.create(:user, :username => "creator",
+                         :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
+                         :quota => 2, :salt => "NFTCRHCJ")
+  log_in('creator', 'pass')
+  token = upload_small_file("select_users", [@test])
+  # NOTE: The step below does not seem to have worked
+  log_in('test', 'pass')
+  visit "/token/#{token}"
+end
+
+Then /^I should receive a file(?: "([^"]*)")?/ do |file|
+  result = page.response_headers['Content-Type'].should == "application/octet-stream"
+  if result
+    result = page.response_headers['Content-Disposition'].should =~ /#{file}/
+  end
+  result
+end
+
 When /^I enter ([^ ]+) details/ do |detail_type|
   pending
   case detail_type
@@ -111,7 +138,7 @@ end
 Then /^I should see the ([^ ]+) page$/ do |the_page|
   case the_page
   when 'login'
-    debugger
+    # debugger
     page.has_content?("Please Log In").should == true
   when 'acknowledgement'
   end
