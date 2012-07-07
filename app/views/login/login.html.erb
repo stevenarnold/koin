@@ -23,7 +23,7 @@
       <h3 id="error"><%= flash[:notice] %></h3>
     <% end %>
     <h1>Please Log In</h1>
-    <%= form_tag(:controller => 'login', :action => 'auth') do %>
+    <%= form_tag(action: 'auth') do %>
       <%= label_tag 'user' %>
       <%= text_field_tag 'user' %>
       <br />

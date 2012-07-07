@@ -22,5 +22,10 @@ class LoginController < ApplicationController
       render 'index'
     end
   end
+  
+  def logout
+    session.delete(:user)
+    render 'login'
+  end
 
 end

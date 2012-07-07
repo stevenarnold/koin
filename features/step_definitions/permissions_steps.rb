@@ -9,13 +9,19 @@ def log_in(user, pass)
   click_button "Submit"
 end
 
-And /I am not logged in/ do
+def log_out
+  visit '/logout'
+end
+
+And /^I am not logged in$/ do
   visit '/'
+  @logged_in = false
 end
 
 Given /^I am logged in$/ do
   step %{I am not an admin user}
   log_in('test', 'pass')
+  @logged_in = true
 end
 
 Then /^show me the page$/ do
@@ -85,9 +91,11 @@ And /^I view "([^']+)'s" files$/ do |user|
   click_link "Show my files"
 end
 
-Given /^I choose to download a file that was saved for ([^ ]+)(?: user)?$/ do |user_type|
+Given /^I am (not )?logged in and I choose to download a file that was saved for ([^ ]+)(?: user)?$/ do |log_status, user_type|
   # Create three users, creator, intended, outsider.  Creator creates a file
   # intended for user intended and not intended for user outsider.
+  log_status ||= 'am'
+  log_status.strip!
   @creator = FactoryGirl.create(:user, username: "creator",
                          enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
                          quota: 2, salt: "NFTCRHCJ")
@@ -101,25 +109,33 @@ Given /^I choose to download a file that was saved for ([^ ]+)(?: user)?$/ do |u
   token = upload_small_file("select_users", [@intended])
   case user_type
   when "another"
-    log_in('outsider', 'pass')
+    log_out
+    if log_status == 'am'
+      log_in('outsider', 'pass')
+    end
     visit "/token/#{token}"
+    #debugger
   when "myself"
     visit "/token/#{token}"
   end
 end
 
-Given /^I choose to download a file that was saved for me by another user$/ do
+Given /^I am logged in and I choose to download a file that was saved for me by another user$/ do
   @creator = FactoryGirl.create(:user, :username => "creator",
+                         :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
+                         :quota => 2, :salt => "NFTCRHCJ")
+  @test = FactoryGirl.create(:user, :username => "test",
                          :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
                          :quota => 2, :salt => "NFTCRHCJ")
   log_in('creator', 'pass')
   token = upload_small_file("select_users", [@test])
-  # NOTE: The step below does not seem to have worked
+  log_out
   log_in('test', 'pass')
   visit "/token/#{token}"
 end
 
 Then /^I should receive a file(?: "([^"]*)")?/ do |file|
+  # debugger
   result = page.response_headers['Content-Type'].should == "application/octet-stream"
   if result
     result = page.response_headers['Content-Disposition'].should =~ /#{file}/
@@ -138,7 +154,7 @@ end
 Then /^I should see the ([^ ]+) page$/ do |the_page|
   case the_page
   when 'login'
-    # debugger
+    #debugger
     page.has_content?("Please Log In").should == true
   when 'acknowledgement'
   end

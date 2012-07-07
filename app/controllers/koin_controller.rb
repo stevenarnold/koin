@@ -81,18 +81,25 @@ class KoinController < ApplicationController
 
   def download
     # Download a file by token
+    #debugger
     @token = params[:token]
     @df = DataFile.where("token_id = ?", @token)[0]
     if @df && @df.digest.length == 32
       if @user.can_download(@df)
         send_file @df.path, :type => "application/octet-stream"
       else
-        render :index
+        if @user.username == 'guest'
+          render 'login/index'
+        else
+          @error = "not found or permission not granted"
+          render 'koin/index'
+        end
       end
     else
+      #debugger                       
       respond_to do |format|
         format.html {
-          render :index
+          render 'login/index'
         }
       end
     end
