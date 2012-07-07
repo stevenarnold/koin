@@ -134,6 +134,18 @@ Given /^I am logged in and I choose to download a file that was saved for me by 
   visit "/token/#{token}"
 end
 
+Given /^I upload a file for another user and then download it$/ do
+  @creator = FactoryGirl.create(:user, :username => "creator",
+                         :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
+                         :quota => 2, :salt => "NFTCRHCJ")
+  @test = FactoryGirl.create(:user, :username => "test",
+                         :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
+                         :quota => 2, :salt => "NFTCRHCJ")
+  log_in('creator', 'pass')
+  token = upload_small_file("select_users", [@test])
+  visit "/token/#{token}"
+end
+
 Then /^I should receive a file(?: "([^"]*)")?/ do |file|
   # debugger
   result = page.response_headers['Content-Type'].should == "application/octet-stream"

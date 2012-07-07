@@ -177,6 +177,7 @@ class KoinController < ApplicationController
       @df.p_only_creator = false
       @df.p_any_logged_user = false
       @df.p_upon_token_presentation = false
+      @df.viewers << @user
       params[:users][:selected].each do |id|
         # debugger
         @df.viewers << User.find(id.to_i)

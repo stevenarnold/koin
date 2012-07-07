@@ -73,4 +73,9 @@ Feature: Permissions
     Then I should see the login page
     When I enter correct details
     Then I should see the acknowledgement page
+    
+  Scenario: A user should always be able to download their own posted file
+
+    Given I upload a file for another user and then download it
+    Then I should receive a file "1mbfile.txt"
 
