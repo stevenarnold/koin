@@ -72,7 +72,18 @@ Feature: Permissions
     Given I am not logged in and I choose to download a file that was saved for another user
     Then I should see the login page
     When I enter correct details
-    Then I should see the acknowledgement page
+    Then I should receive a file "1mbfile.txt"
+
+  Scenario: File download for invalid user when user is not logged in
+      
+    NOTE: When I try to download a file saved for a particular user and I
+    am not logged in, I should be taken to the login page, then allowed or
+    denied based on whether I am the correct user.
+
+    Given I am not logged in and I choose to download a file that was saved for another user
+    Then I should see the login page
+    When I enter invalid details
+    Then I should see "File Upload"
     
   Scenario: A user should always be able to download their own posted file
 

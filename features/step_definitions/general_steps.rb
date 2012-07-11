@@ -11,6 +11,7 @@ Given /^cucumber is properly initialized$/ do
   g.username = 'guest'
   g.quota = 2
   g.save!
+  Koin::Application::ALLOW_GUEST = true
 end
 
 Then /^I should see "([^"]*)"$/ do |text|

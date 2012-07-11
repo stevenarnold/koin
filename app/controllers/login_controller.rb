@@ -4,7 +4,7 @@ class LoginController < ApplicationController
 
   #FIXME neither a cookie nor an expiration are put here presently
   def auth
-    # debugger
+    #debugger
     user, pass = params[:user], params[:pass]
     # debugger
     if user && pass
@@ -13,7 +13,14 @@ class LoginController < ApplicationController
       if dbuser && Digest::MD5.hexdigest(pass + dbuser.salt) == dbuser.enc_passwd
         flash[:notice] = 'Login Successful!'
         session[:user] = @user = dbuser
-        redirect_to '/koin/index'
+        # debugger
+        if session[:origpath]
+          path = session[:origpath]
+          session.delete(:origpath)
+          redirect_to path
+        else
+          redirect_to '/koin/index'
+        end
       else
         flash[:notice] = 'Incorrect username or password'
         render 'index'

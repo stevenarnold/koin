@@ -1,4 +1,5 @@
 require 'digest/md5'
+require 'archive/zip'
 
 class KoinController < ApplicationController
   layout "application"
@@ -83,12 +84,21 @@ class KoinController < ApplicationController
     # Download a file by token
     #debugger
     @token = params[:token]
+    @path = params[:path]
     @df = DataFile.where("token_id = ?", @token)[0]
     if @df && @df.digest.length == 32
       if @user.can_download(@df)
-        send_file @df.path, :type => "application/octet-stream"
+        if @path && @df.path =~ /\.zip$/
+          # Return the individual file requested from the zip
+          zip_path = File.join(Rails.root, 'features', 'upload_files', @df.path)
+          zipfile = Archive::Zip::Entry::File.new(zip_path).file_data
+          send_data zipfile.read, :type => "application/octet-stream"
+        else
+          send_file @df.path, :type => "application/octet-stream"
+        end
       else
         if @user.username == 'guest'
+          session[:origpath] = request.fullpath
           render 'login/index'
         else
           @error = "not found or permission not granted"
@@ -99,6 +109,7 @@ class KoinController < ApplicationController
       #debugger                       
       respond_to do |format|
         format.html {
+          session[:origpath] = request.fullpath
           render 'login/index'
         }
       end

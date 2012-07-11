@@ -2,7 +2,7 @@ require 'rspec/expectations'
 require 'rubygems'
 require 'ruby-debug'
 
-def log_in(user, pass)
+def log_in(user, pass='pass')
   visit("/login/index")
   fill_in("user", :with => user)
   fill_in("pass", :with => pass)
@@ -94,6 +94,7 @@ end
 Given /^I am (not )?logged in and I choose to download a file that was saved for ([^ ]+)(?: user)?$/ do |log_status, user_type|
   # Create three users, creator, intended, outsider.  Creator creates a file
   # intended for user intended and not intended for user outsider.
+  #debugger
   log_status ||= 'am'
   log_status.strip!
   @creator = FactoryGirl.create(:user, username: "creator",
@@ -105,6 +106,7 @@ Given /^I am (not )?logged in and I choose to download a file that was saved for
   @outsider = FactoryGirl.create(:user, username: "outsider",
                          enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
                          quota: 2, salt: "NFTCRHCJ")
+  #debugger
   log_in('creator', 'pass')
   token = upload_small_file("select_users", [@intended])
   case user_type
@@ -114,7 +116,7 @@ Given /^I am (not )?logged in and I choose to download a file that was saved for
       log_in('outsider', 'pass')
     end
     visit "/token/#{token}"
-    #debugger
+    # debugger
   when "myself"
     visit "/token/#{token}"
   end
@@ -156,10 +158,12 @@ Then /^I should receive a file(?: "([^"]*)")?/ do |file|
 end
 
 When /^I enter ([^ ]+) details/ do |detail_type|
-  pending
   case detail_type
   when "invalid"
+    log_in('outsider', 'pass')
   when "correct"
+    # debugger
+    log_in('intended', 'pass')
   end
 end
 

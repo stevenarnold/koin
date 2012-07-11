@@ -8,6 +8,16 @@ FactoryGirl.define do
   end
 end
 
+def make_user(name, admin=false, quota=2)
+  FactoryGirl.create(:user, username: name,
+                     enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
+                     p_admin: admin, quota: quota, salt: "NFTCRHCJ")
+end
+
+def test_file(name)
+  File.join(Rails.root, 'features', 'upload_files', name)
+end
+
 def small_file
   File.join(Rails.root, 'features', 'upload_files', '1mbfile.txt')
 end
@@ -16,12 +26,7 @@ def large_file
   File.join(Rails.root, 'features', 'upload_files', '3mbfile.txt')
 end
 
-def upload_large_file
-  attach_file("upload[datafile]", large_file)
-  click_button "Upload"
-end
-
-def upload_small_file(upload_type="anyone", for_users=[])
+def upload_file(file, upload_type="anyone", for_users=[])
   # debugger
   case upload_type
   when "anyone"
@@ -35,10 +40,19 @@ def upload_small_file(upload_type="anyone", for_users=[])
       select_list.select(user.username)
     end
   end
-  attach_file("upload[datafile]", small_file)
+  attach_file("upload[datafile]", file)
   click_button "Upload"
   link_text = find("a[href*='token']").native.attributes["href"].value
   link_text.match(/token\/(.*)/)[1]
+end
+
+def upload_large_file
+  attach_file("upload[datafile]", large_file)
+  click_button "Upload"
+end
+
+def upload_small_file(upload_type="anyone", for_users=[])
+  upload_file(small_file, upload_type, for_users)
 end
 
 Given /^I am logged in as a guest with a quota$/ do

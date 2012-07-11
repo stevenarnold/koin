@@ -18,6 +18,7 @@ gem "launchy"
 gem "cucumber-rails"
 gem 'database_cleaner', '0.7.0'
 gem 'minitest'
+gem 'archive-zip'
 # gem "webrat"
 
 # Gems used only for assets and not required
