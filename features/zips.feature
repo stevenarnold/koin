@@ -4,6 +4,7 @@ Feature: Fetch files within zip files
   
   Background:
     Given cucumber is properly initialized
+    And I upload a zip file that contains multiple files
   
   Scenario: Fetch a file within an uploaded zip
   
@@ -13,11 +14,14 @@ Feature: Fetch files within zip files
     mypic.jpg (in addition perhaps to other files), the url token/abc/mypic.jpg
     will return the individual jpg.
     
-    Given I upload a zip file that contains multiple files
-    And I download one of the files using the path extension after the token
+    And I download one of the files using the path "sample1.txt" after the token
     Then I should receive a file "sample1.txt"
 
   Scenario: List the files within a zip file
   
     I should be able to list the files for a zip file I have permission to 
     download by using the URL syntax token/list/:token(/:path))
+    
+    And I download one of the files using the path "foobar/dirtext.txt" after the token
+    Then I should receive a file "dirtext.txt"
+
