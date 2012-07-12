@@ -149,7 +149,7 @@ Given /^I upload a file for another user and then download it$/ do
 end
 
 Then /^I should receive a file(?: "([^"]*)")?/ do |file|
-  # debugger
+  #debugger
   result = page.response_headers['Content-Type'].should == "application/octet-stream"
   if result
     result = page.response_headers['Content-Disposition'].should =~ /#{file}/

@@ -1,5 +1,5 @@
 require 'digest/md5'
-require 'archive/zip'
+require 'zip/zip'
 
 class KoinController < ApplicationController
   layout "application"
@@ -84,15 +84,18 @@ class KoinController < ApplicationController
     # Download a file by token
     #debugger
     @token = params[:token]
-    @path = params[:path]
+    @path = params.fetch(:path, '') + '.' + params.fetch(:format, '')
     @df = DataFile.where("token_id = ?", @token)[0]
     if @df && @df.digest.length == 32
       if @user.can_download(@df)
         if @path && @df.path =~ /\.zip$/
           # Return the individual file requested from the zip
-          zip_path = File.join(Rails.root, 'features', 'upload_files', @df.path)
-          zipfile = Archive::Zip::Entry::File.new(zip_path).file_data
-          send_data zipfile.read, :type => "application/octet-stream"
+          Zip::ZipFile.open(@df.path) do |zipfile|
+            filename = File.basename(@path)
+            zipfile.get_output_stream(filename) do |f|
+              send_data f.read, :filename => filename, :type => "application/octet-stream"
+            end
+          end
         else
           send_file @df.path, :type => "application/octet-stream"
         end
