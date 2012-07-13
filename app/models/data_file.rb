@@ -5,7 +5,7 @@ class DataFile < ActiveRecord::Base
   belongs_to :user
   has_many :permitted_uses
   has_many :viewers, :foreign_key => "user_id",
-  :through => :permitted_uses, :source => :user
+           :through => :permitted_uses, :source => :user
   
   attr_accessible :path, :digest, :token_id
 
@@ -14,8 +14,12 @@ class DataFile < ActiveRecord::Base
   end
   
   def capture_file(upload, available)
+    # Get the MD5 of the file and return the fetch key
+    self.token_id = UUID.new.generate
     name =  upload['datafile'].original_filename
-    directory = "#{Rails.root}/public/data"
+    directory = "#{Rails.root}/public/data/#{self.token_id}"
+    # create the directory
+    Dir::mkdir(directory)
     # create the file path
     self.path = File.join(directory, name)
     # write the file
@@ -31,10 +35,8 @@ class DataFile < ActiveRecord::Base
     end
     post.write(file_content)
     post.close
-    # Get the MD5 of the file and return the fetch key
     self.size = File.stat(self.path).size
     self.digest = Digest::MD5.hexdigest(file_content)
-    self.token_id = UUID.new.generate
     # Quota handling.  Start by just getting the size.
   end
 end
