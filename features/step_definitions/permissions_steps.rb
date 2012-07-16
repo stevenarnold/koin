@@ -187,7 +187,7 @@ Then /^the file should have the password$/ do
   @df.password.should == "pass"
 end
 
-And /^another user attempts to download the file$/ do
+And /^(?:another|the) user attempts to download the file$/ do
   visit "/token/#{@token}"
 end
 

@@ -106,4 +106,17 @@ Feature: Permissions
     When they enter invalid details, they should see the password prompt again
     When they enter correct details
     Then they should receive a file "1mbfile.txt"
+    
+  Scenario: Require a password to view a file, even for a logged in user
+  
+    If a password is specified for a file and set for a particular user, the user
+    still has to enter the password for the file, even though the file was set
+    for them.
+
+    Given I upload a file with a password for a user
+    And the user attempts to download the file
+    Then they should see a password prompt
+    When they enter invalid details, they should see the password prompt again
+    When they enter correct details
+    Then they should receive a file "1mbfile.txt"
 
