@@ -87,7 +87,7 @@ class KoinController < ApplicationController
     @path = params.fetch(:path, '') + '.' + params.fetch(:format, '')
     @df = DataFile.where("token_id = ?", @token)[0]
     if @df && @df.digest.length == 32
-      if @user.can_download(@df)
+      if @user.can_download(@df, params[:pass])
         if @path && @df.path =~ /\.zip$/
           # Return the individual file requested from the zip
           Zip::ZipFile.open(@df.path) do |zipfile|
@@ -103,6 +103,8 @@ class KoinController < ApplicationController
         if @user.username == 'guest'
           session[:origpath] = request.fullpath
           render 'login/index'
+        elsif @df.password
+          render :template => "koin/file_password"
         else
           @error = "not found or permission not granted"
           render 'koin/index'
@@ -198,6 +200,9 @@ class KoinController < ApplicationController
       end
     end
     @df.creator_id = @user.id
+    if params[:pass] != ""
+      @df.password = params[:pass]
+    end
     begin
       #debugger
       @df.capture_file(upload, available)

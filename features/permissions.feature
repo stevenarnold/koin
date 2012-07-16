@@ -89,4 +89,21 @@ Feature: Permissions
 
     Given I upload a file for another user and then download it
     Then I should receive a file "1mbfile.txt"
+    
+  Scenario: When I upload a file with a password, it should have that password
+  
+    Given I upload a file with a password
+    Then the file should have the password
+    
+  Scenario: Require a password to view a file
+  
+    Users have the option of entering a password to view a file.  The system should
+    ask for the password and check it before providing the file.
+    
+    Given I upload a file with a password
+    And another user attempts to download the file
+    Then they should see a password prompt
+    When they enter invalid details, they should see the password prompt again
+    When they enter correct details
+    Then they should receive a file "1mbfile.txt"
 

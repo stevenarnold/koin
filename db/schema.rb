@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120707041746) do
+ActiveRecord::Schema.define(:version => 20120713040651) do
 
   create_table "data_files", :force => true do |t|
     t.string   "digest"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(:version => 20120707041746) do
     t.string   "token_id"
     t.integer  "creator_id"
     t.integer  "size"
+    t.string   "password"
   end
 
   create_table "permitted_uses", :force => true do |t|

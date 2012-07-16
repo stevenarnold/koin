@@ -148,10 +148,10 @@ Given /^I upload a file for another user and then download it$/ do
   visit "/token/#{token}"
 end
 
-Then /^I should receive a file(?: "([^"]*)")?/ do |file|
+Then /^(?:I|they) should receive a file(?: "([^"]*)")?/ do |file|
   #debugger
-  result = page.response_headers['Content-Type'].should == "application/octet-stream"
-  if result
+  #result = page.response_headers['Content-Type'].should == "application/octet-stream"
+  if page.response_headers.should have_key('Content-Type')
     result = page.response_headers['Content-Disposition'].should =~ /#{file}/
   end
   result
@@ -174,5 +174,37 @@ Then /^I should see the ([^ ]+) page$/ do |the_page|
     page.has_content?("Please Log In").should == true
   when 'acknowledgement'
   end
+end
+
+Given /^I upload a file with a password/ do
+  standard_user
+  # @them = make_user('them')
+  @token = upload_file(test_file("1mbfile.txt"), :password => 'pass')
+end
+
+Then /^the file should have the password$/ do
+  @df = DataFile.where("token_id = ?", @token)[0]
+  @df.password.should == "pass"
+end
+
+And /^another user attempts to download the file$/ do
+  visit "/token/#{@token}"
+end
+
+Then /^they should see a password prompt$/ do
+  # debugger
+  page.body.should =~ /Please enter password/
+end
+
+When /^they enter invalid details, they should see the password prompt again$/ do
+  fill_in("pass", :with => "foobar")
+  click_button "Submit"
+  page.body.should =~ /Please enter password/
+end
+
+When /^they enter correct details$/ do
+  fill_in("pass", :with => "pass")
+  click_button "Submit"
+  step %{I should receive a file "1mbfile.txt"}
 end
 

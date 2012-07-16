@@ -26,8 +26,12 @@ def large_file
   File.join(Rails.root, 'features', 'upload_files', '3mbfile.txt')
 end
 
-def upload_file(file, upload_type="anyone", for_users=[])
-  # debugger
+def upload_file(file, params={})
+  #upload_type="anyone", for_users=[], password=nil)
+  #debugger
+  upload_type = params[:upload_type]
+  for_users = params[:for_users]
+  password = params[:password]
   case upload_type
   when "anyone"
     choose("download_perms_anyone")
@@ -39,6 +43,9 @@ def upload_file(file, upload_type="anyone", for_users=[])
     for_users.each do |user|
       select_list.select(user.username)
     end
+  end
+  if password
+    fill_in("pass", :with => "pass")
   end
   attach_file("upload[datafile]", file)
   click_button "Upload"
@@ -52,7 +59,7 @@ def upload_large_file
 end
 
 def upload_small_file(upload_type="anyone", for_users=[])
-  upload_file(small_file, upload_type, for_users)
+  upload_file(small_file, :upload_type => upload_type, :for_users => for_users)
 end
 
 Given /^I am logged in as a guest with a quota$/ do

@@ -44,12 +44,16 @@ class User < ActiveRecord::Base
     super(*args)
   end
   
-  def can_download(data_file)
-    # debugger
-    if data_file.p_any_logged_user || data_file.p_upon_token_presentation
-      true
-    elsif viewable_files.include?(data_file)
-      true
+  def can_download(data_file, password)
+    #debugger
+    if (!data_file.password) || (data_file.password == password)
+      if data_file.p_any_logged_user || data_file.p_upon_token_presentation
+        true
+      elsif viewable_files.include?(data_file)
+        true
+      else
+        false
+      end
     else
       false
     end
