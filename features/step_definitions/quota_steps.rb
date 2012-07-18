@@ -29,9 +29,10 @@ end
 def upload_file(file, params={})
   #upload_type="anyone", for_users=[], password=nil)
   #debugger
-  upload_type = params[:upload_type]
-  for_users = params[:for_users]
+  upload_type = params.fetch(:upload_type, 'anyone')
+  for_users = params.fetch(:for_users, [])
   password = params[:password]
+  expiration = params.fetch(:expiration, nil)
   case upload_type
   when "anyone"
     choose("download_perms_anyone")
@@ -47,6 +48,9 @@ def upload_file(file, params={})
   if password
     fill_in("pass", :with => "pass")
   end
+  if expiration
+    fill_in('expiration', :with => expiration)
+  end
   attach_file("upload[datafile]", file)
   click_button "Upload"
   link_text = find("a[href*='token']").native.attributes["href"].value
@@ -58,7 +62,9 @@ def upload_large_file
   click_button "Upload"
 end
 
-def upload_small_file(upload_type="anyone", for_users=[])
+def upload_small_file(upload_type, args={})
+  upload_type ||= "anyone"
+  for_users = args.fetch(:for_users, [])
   upload_file(small_file, :upload_type => upload_type, :for_users => for_users)
 end
 

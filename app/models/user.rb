@@ -45,16 +45,23 @@ class User < ActiveRecord::Base
   end
   
   def can_download(data_file, password)
-    #debugger
-    if (!data_file.password) || (data_file.password == password)
-      if data_file.p_any_logged_user || data_file.p_upon_token_presentation
-        true
-      elsif viewable_files.include?(data_file)
-        true
+    # debugger
+    if (!data_file.expiration) || (data_file.expiration > Time.now.localtime)
+      if (!data_file.password) || (data_file.password == password)
+        if data_file.p_any_logged_user || data_file.p_upon_token_presentation
+          true
+        elsif viewable_files.include?(data_file)
+          true
+        else
+          # User doesn't have permission to view this file
+          false
+        end
       else
+        # Password required & incorrect
         false
       end
     else
+      # File has expired
       false
     end
   end

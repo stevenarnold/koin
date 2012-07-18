@@ -13,6 +13,10 @@ def log_out
   visit '/logout'
 end
 
+def file_by_token(token)
+  DataFile.where("token_id = ?", token)[0]
+end
+
 And /^I am not logged in$/ do
   visit '/'
   @logged_in = false
@@ -108,7 +112,7 @@ Given /^I am (not )?logged in and I choose to download a file that was saved for
                          quota: 2, salt: "NFTCRHCJ")
   #debugger
   log_in('creator', 'pass')
-  token = upload_small_file("select_users", [@intended])
+  token = upload_small_file("select_users", :for_users => [@intended])
   case user_type
   when "another"
     log_out
@@ -130,7 +134,7 @@ Given /^I am logged in and I choose to download a file that was saved for me by 
                          :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
                          :quota => 2, :salt => "NFTCRHCJ")
   log_in('creator', 'pass')
-  token = upload_small_file("select_users", [@test])
+  token = upload_small_file("select_users", :for_users => [@test])
   log_out
   log_in('test', 'pass')
   visit "/token/#{token}"
@@ -144,7 +148,7 @@ Given /^I upload a file for another user and then download it$/ do
                          :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
                          :quota => 2, :salt => "NFTCRHCJ")
   log_in('creator', 'pass')
-  token = upload_small_file("select_users", [@test])
+  token = upload_small_file("select_users", :for_users => [@test])
   visit "/token/#{token}"
 end
 
@@ -182,12 +186,17 @@ Given /^I upload a file with a password/ do
   @token = upload_file(test_file("1mbfile.txt"), :password => 'pass')
 end
 
+Given /^I upload a file with an expiration date$/ do
+  standard_user
+  @token = upload_file(test_file("tiny.txt"), :expiration => (Time.now.localtime + 5.minutes).to_s)
+end
+
 Then /^the file should have the password$/ do
-  @df = DataFile.where("token_id = ?", @token)[0]
+  @df = file_by_token(@token)
   @df.password.should == "pass"
 end
 
-And /^(?:another|the) user attempts to download the file$/ do
+And /^(?:another|the) user attempts to download the file/ do
   visit "/token/#{@token}"
 end
 
@@ -207,4 +216,12 @@ When /^they enter correct details$/ do
   click_button "Submit"
   step %{I should receive a file "1mbfile.txt"}
 end
+
+But /^if the file expires$/ do
+  @df = file_by_token(@token)
+  @df.expiration = (Time.now.localtime - 5.minutes).to_s
+  @df.save!
+end
+
+
 

@@ -203,6 +203,9 @@ class KoinController < ApplicationController
     if params[:pass] != ""
       @df.password = params[:pass]
     end
+    if params[:expiration] != ""
+      @df.expiration = params[:expiration]
+    end
     begin
       #debugger
       @df.capture_file(upload, available)

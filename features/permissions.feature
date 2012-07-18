@@ -119,4 +119,18 @@ Feature: Permissions
     When they enter invalid details, they should see the password prompt again
     When they enter correct details
     Then they should receive a file "1mbfile.txt"
+    
+  Scenario: Allow a user to enter an expiration date for a file
+  
+    If a file is given an expiration date, the file should be available (assuming
+    all other permissions are valid) prior to that expiration date.  If it is
+    requested on or after the expirationd date, the file should be deleted and
+    the user informed that "permission denied."
+    
+    Given I upload a file with an expiration date
+    And the user attempts to download the file before the expiration date
+    Then they should receive a file "tiny.txt"
+    But if the file expires
+    And the user attempts to download the file
+    Then I should see "not found or permission not granted"
 

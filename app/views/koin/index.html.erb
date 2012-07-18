@@ -33,6 +33,7 @@
         <%= radio_button_tag :download_perms, 'specific_users' %>These Users:
         <%= select_tag 'users[selected][]', options_from_collection_for_select(@users, 'id', 'username'), { :multiple => true, :size =>5, :id => "users_selected" } %><br />
         Optional Password: <%= text_field_tag :pass %><br />
+        Optional Expiration: <%= text_field_tag :expiration %><emphasis>(YYYY-MM-DD HH:MM:SS)</emphasis><br />
         <% end %>
         <%= submit_tag "Upload" %>
       <% end %>
