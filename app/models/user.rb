@@ -49,20 +49,20 @@ class User < ActiveRecord::Base
     if (!data_file.expiration) || (data_file.expiration > Time.now.localtime)
       if (!data_file.password) || (data_file.password == password)
         if data_file.p_any_logged_user || data_file.p_upon_token_presentation
-          true
+          :permission_granted
         elsif viewable_files.include?(data_file)
-          true
+          :permission_granted
         else
           # User doesn't have permission to view this file
-          false
+          :permission_denied
         end
       else
         # Password required & incorrect
-        false
+        :wrong_password
       end
     else
       # File has expired
-      false
+      :file_expired
     end
   end
   

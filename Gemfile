@@ -39,3 +39,7 @@ gem 'jquery-rails'
 
 # To use debugger
 gem 'ruby-debug19', :require => 'ruby-debug'
+
+# For jruby
+# gem 'ruby-debug-base'
+# gem 'ruby-debug-ide'

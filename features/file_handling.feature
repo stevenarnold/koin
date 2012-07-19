@@ -34,4 +34,14 @@ Feature: Handle proper file management
     Given I upload the file "same_names/1/test.txt"
     And I upload the file "same_names/2/test.txt"
     When I download the files, they should be different
+    
+  Scenario: When a file expires, the system should delete the file
+  
+    The file should be deleted both from the database and from the filesystem,
+    including its enclosing directory.
 
+    Given I upload a file with an expiration date
+    And the file expires
+    And the user attempts to download the file
+    Then the file should not be in the database
+    And the file should not be in the filesystem

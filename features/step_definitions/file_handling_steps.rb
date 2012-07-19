@@ -31,3 +31,15 @@ When /^I download the files, they should be different$/ do
   @results.uniq.length.should == @results.length
 end
 
+Then /^the file should not be in the database$/ do
+  file_by_token(@token).should == nil
+end
+
+And /^the file should not be in the filesystem$/ do
+  token_file = File.join(Rails.root, 'public', 'data', @token)
+  File.exist?(token_file).should == false
+end
+
+
+
+

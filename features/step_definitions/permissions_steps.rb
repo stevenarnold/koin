@@ -217,7 +217,7 @@ When /^they enter correct details$/ do
   step %{I should receive a file "1mbfile.txt"}
 end
 
-But /^if the file expires$/ do
+But /^(?:if )?the file expires$/ do
   @df = file_by_token(@token)
   @df.expiration = (Time.now.localtime - 5.minutes).to_s
   @df.save!

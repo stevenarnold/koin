@@ -1,5 +1,6 @@
 require 'digest/md5'
 require 'zip/zip'
+require 'fileutils'
 
 class KoinController < ApplicationController
   layout "application"
@@ -80,14 +81,20 @@ class KoinController < ApplicationController
     end
   end
 
+  def not_found
+    @error = "not found or permission not granted"
+    render 'koin/index'
+  end
+  
   def download
     # Download a file by token
-    #debugger
+    # debugger
     @token = params[:token]
     @path = params.fetch(:path, '') + '.' + params.fetch(:format, '')
     @df = DataFile.where("token_id = ?", @token)[0]
     if @df && @df.digest.length == 32
-      if @user.can_download(@df, params[:pass])
+      case @user.can_download(@df, params[:pass])
+      when :permission_granted
         if @path && @df.path =~ /\.zip$/
           # Return the individual file requested from the zip
           Zip::ZipFile.open(@df.path) do |zipfile|
@@ -99,16 +106,22 @@ class KoinController < ApplicationController
         else
           send_file @df.path, :type => "application/octet-stream"
         end
-      else
+      when :permission_denied
         if @user.username == 'guest'
           session[:origpath] = request.fullpath
           render 'login/index'
-        elsif @df.password
-          render :template => "koin/file_password"
         else
-          @error = "not found or permission not granted"
-          render 'koin/index'
+          not_found
         end
+      when :wrong_password
+        render :template => "koin/file_password"
+      when :file_expired
+        # Remove the database entry and delete the token directory
+        FileUtils.rm_rf(File.dirname(@df.path))
+        @df.destroy
+        not_found
+      else
+        not_found
       end
     else
       #debugger                       
