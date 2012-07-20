@@ -45,3 +45,16 @@ Feature: Handle proper file management
     And the user attempts to download the file
     Then the file should not be in the database
     And the file should not be in the filesystem
+    
+  Scenario: Expiration date blocks even logged in user with password
+  
+    Once a file expires, even a logged in user with a password cannot
+    access it.
+
+    Given I upload a file with a password for a user
+    And the file expires
+    And the user attempts to download the file
+    Then I should see "not found or permission not granted"
+    And the file should not be in the database
+    And the file should not be in the filesystem
+

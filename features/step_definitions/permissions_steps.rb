@@ -200,9 +200,13 @@ And /^(?:another|the) user attempts to download the file/ do
   visit "/token/#{@token}"
 end
 
-Then /^they should see a password prompt$/ do
+Then /^they should (not )?see a password prompt$/ do |see|
   # debugger
-  page.body.should =~ /Please enter password/
+  if see == "not "
+    page.body.should_not =~ /Please enter password/
+  else
+    page.body.should =~ /Please enter password/
+  end
 end
 
 When /^they enter invalid details, they should see the password prompt again$/ do
