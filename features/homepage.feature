@@ -20,3 +20,12 @@ Feature: Homepage
     And I should not see "File Upload"
     And I should not see "Welcome, guest"
     
+  Scenario: Saved subject and description information should be saved
+  
+    If I save a file with a subject and description and then later view the
+    file, those values should appear.
+    
+    Given that I upload a file with a subject and a description
+    And I view the file
+    Then I should see the subject and description that I saved
+    

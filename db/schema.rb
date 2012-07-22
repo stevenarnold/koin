@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120717141121) do
+ActiveRecord::Schema.define(:version => 20120720124716) do
 
   create_table "data_files", :force => true do |t|
     t.string   "digest"
@@ -26,6 +26,8 @@ ActiveRecord::Schema.define(:version => 20120717141121) do
     t.integer  "size"
     t.string   "password"
     t.datetime "expiration"
+    t.string   "subject"
+    t.string   "description"
   end
 
   create_table "permitted_uses", :force => true do |t|
