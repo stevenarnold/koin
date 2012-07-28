@@ -199,7 +199,7 @@ end
 
 And /^(?:another|the) user ("[^"]+" )?attempts to download the file/ do |user|
   #debugger
-  if !user.empty?
+  if user && !user.empty?
     user.gsub!(/"/, '').gsub!(/ /, '')
     log_in(user)
   end
