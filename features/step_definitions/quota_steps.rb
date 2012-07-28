@@ -28,7 +28,7 @@ end
 
 def upload_file(file, params={})
   #upload_type="anyone", for_users=[], password=nil)
-  #debugger
+  # debugger
   upload_type = params.fetch(:upload_type, 'anyone')
   for_users = params.fetch(:for_users, [])
   password = params[:password]

@@ -1,13 +1,52 @@
 require 'digest/md5'
 
+# A 'user' may be a person or a group of people.  In Koin, we do not distinguish
+# between the two.  Even to the extent of logging in, while you almost never 
+# log in as a group, and you almost always do as a user, there is no fundamental
+# code-level checking we do to make sure that is enforced.  (Sometimes you don't
+# want users to log in, and sometimes maybe you want to be able to log in as a 
+# group without first creating a user and putting the user in that group; although
+# admittedly the latter arrangement is more a testing convenience).
 class User < ActiveRecord::Base
   has_many :permitted_uses
   has_many :viewable_files, :class_name => 'DataFile', :foreign_key => "data_file_id",
            :through => :permitted_uses, :source => :data_file
   has_many :data_files
   
+  # Group-to-group membership  
+  
+  has_many :group_memberships_children, :class_name => "GroupMembership",
+           :foreign_key => :parent_group_id
+  has_many :child_groups, :through => :group_memberships_children, :source => :child_group
+  
+  has_many :group_memberships_parents, :class_name => "GroupMembership", 
+           :foreign_key => :child_group_id
+  has_many :parent_groups, :through => :group_memberships_parents, :source => :parent_group
+
+  # has_many :parent_group_links, :class_name => 'GroupMembership',
+  #          :foreign_key => 'parent_user_id'
+  # has_many :parent_groups, :through => :parent_group_links,
+  #          :foreign_key => "parent_user_id"
+  # 
+  # has_many :child_group_links, :class_name => 'GroupMembership',
+  #          :foreign_key => 'child_user_id'
+  # has_many :child_groups, :through => :child_group_links,
+  #          :foreign_key => "child_user_id"
+  
   attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
   before_save :set_up_passwd
+  
+  # Return all ancestors of the current entity
+  def all_ancestors(ancestors=[])
+    # Assumes only one parent
+    result = []
+    c = self
+    while c && c.parent_groups
+      result += c.parent_groups
+      c = c.parent_groups[0]
+    end
+    result
+  end
   
   def _gensalt(len=8)
     (0...len).map{65.+(rand(25)).chr}.join
@@ -53,6 +92,12 @@ class User < ActiveRecord::Base
         elsif viewable_files.include?(data_file)
           :permission_granted
         else
+          #debugger
+          all_ancestors.each do |ancestor|
+            if ancestor.viewable_files.include?(data_file)
+              return :permission_granted
+            end
+          end
           # User doesn't have permission to view this file
           :permission_denied
         end
@@ -84,3 +129,7 @@ class User < ActiveRecord::Base
     end
   end
 end
+
+# There is no difference between an Entity, a User and a Group
+Entity = User
+Group = User

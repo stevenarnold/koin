@@ -153,12 +153,13 @@ Given /^I upload a file for another user and then download it$/ do
 end
 
 Then /^(?:I|they) should receive a file(?: "([^"]*)")?/ do |file|
-  #debugger
+  # debugger
   #result = page.response_headers['Content-Type'].should == "application/octet-stream"
   if page.response_headers.should have_key('Content-Type')
     result = page.response_headers['Content-Disposition'].should =~ /#{file}/
+  else
+    fail
   end
-  result
 end
 
 When /^I enter ([^ ]+) details/ do |detail_type|
@@ -196,7 +197,12 @@ Then /^the file should have the password$/ do
   @df.password.should == "pass"
 end
 
-And /^(?:another|the) user attempts to download the file/ do
+And /^(?:another|the) user ("[^"]+" )?attempts to download the file/ do |user|
+  #debugger
+  if !user.empty?
+    user.gsub!(/"/, '').gsub!(/ /, '')
+    log_in(user)
+  end
   visit "/token/#{@token}"
 end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120720124716) do
+ActiveRecord::Schema.define(:version => 20120725162713) do
 
   create_table "data_files", :force => true do |t|
     t.string   "digest"
@@ -30,6 +30,13 @@ ActiveRecord::Schema.define(:version => 20120720124716) do
     t.string   "description"
   end
 
+  create_table "group_memberships", :force => true do |t|
+    t.integer  "parent_group_id", :null => false
+    t.integer  "child_group_id",  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "permitted_uses", :force => true do |t|
     t.integer "user_id"
     t.integer "data_file_id"
@@ -46,7 +53,7 @@ ActiveRecord::Schema.define(:version => 20120720124716) do
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "users", :force => true do |t|
-    t.string   "username"
+    t.string   "username",                        :null => false
     t.string   "enc_passwd"
     t.string   "salt"
     t.boolean  "p_search_all", :default => false
