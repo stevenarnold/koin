@@ -24,3 +24,8 @@ But /^(?:if )?I add "([^"]+)" as a user to "([^"]+)"/ do |child, parent|
   parent.child_groups << (child)
 end
 
+Given /^I click "([^"]*)"$/ do |link|
+  debugger
+  click_link link
+end
+
