@@ -19,6 +19,7 @@ Koin::Application.routes.draw do
   match 'koin/setup' => 'koin#setup'
   match 'koin/admin' => 'koin#admin'
   match 'koin/auth' => 'login#auth'
+  match 'users/new' => 'users#new'
   match 'logout' => 'login#logout'
 
   # Users

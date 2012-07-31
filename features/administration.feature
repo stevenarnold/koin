@@ -9,26 +9,21 @@ Feature: User/group administration
     And I am logged in as an admin user
     And I click "Administer users"
 
-  Scenario: View user list
-  
-    This is a basic check for display sanity
-  
-    Then I should see "primary, secondary, third" exactly one time each
-    
   Scenario: Create new group
   
     I should be able to create a new group and edit the attributes, like
     admin and quota, for that group
   
-    If I click "Create New User/Group"
+    When I press the "Create New User/Group" button
     And fill in details for a non-admin user "NonAdmin"
-    Then I should see "NonAdmin" exactly one time
+    Then I should see "User created!"
+    And I should see "NonAdmin" exactly 2 times
     
   Scenario: Delete a group
   
     I should be able to pick a group and delete it
     
-    If I click "Delete a User/Group"
+    When I press the "Delete a User/Group" button
     And select the user "secondary" to delete
     Then I should not see "secondary"
     
@@ -66,11 +61,15 @@ Feature: User/group administration
     
   Scenario: Non-admins should not be able to list users
   
-    Given I log in as a non-admin user
+    Given I am logged in as a non-admin user
     Then I should not see "Administer Users"
     And if I visit the admin link manually
     Then I should see the login page
-    And if I log in as an admin
-    Then I should see the userlist page
+    And if I log in as the admin user
+    Then I should see "Administer Users"
+    And I should see "primary"
+    And I should see "secondary"
+    And I should see "third"
+    
 
 

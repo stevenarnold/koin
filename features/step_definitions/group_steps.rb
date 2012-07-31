@@ -25,7 +25,7 @@ But /^(?:if )?I add "([^"]+)" as a user to "([^"]+)"/ do |child, parent|
 end
 
 Given /^I click "([^"]*)"$/ do |link|
-  debugger
+  # debugger
   click_link link
 end
 

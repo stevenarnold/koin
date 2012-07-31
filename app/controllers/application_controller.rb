@@ -22,4 +22,11 @@ class ApplicationController < ActionController::Base
   def get_user_from_param_id
     @target_user = params[:id] ? User.find(params[:id]) : User.find(params[:users][:id]) 
   end
+  
+  def require_admin
+    if !@user || !@user.is_admin
+      session[:next_action] = "admin"
+      redirect_to :controller => :login, :action => :index
+    end
+  end
 end

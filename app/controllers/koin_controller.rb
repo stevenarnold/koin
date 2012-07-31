@@ -13,6 +13,7 @@ class KoinController < ApplicationController
   before_filter :get_users #, :only => [:index, :show, :download, :edit, :uploadFile]
   before_filter :get_action
   before_filter :require_logon
+  before_filter :require_admin, :only => [:admin]
   
   def require_logon
     #debugger
@@ -74,10 +75,14 @@ class KoinController < ApplicationController
   
   def index
     # debugger
-    case 
-    when session[:next_action] == 'show'
-      delete session[:next_action]
+    case session[:next_action]
+    when 'show'
+      session.delete(:next_action)
       render :show
+    when 'admin'
+      session.delete(:next_action)
+      admin
+      render :admin
     end
   end
 
@@ -235,6 +240,7 @@ class KoinController < ApplicationController
   end
   
   def admin
+    # debugger
     @users = User.find_by_sql("SELECT    u.id, u.username, count(df.digest) AS num,
                                          sum(df.size) AS size, u.quota
                                FROM      users u
