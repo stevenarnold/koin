@@ -47,8 +47,12 @@ class UsersController < ApplicationController
     @target_user.p_search_all = params['user']['p_search_all']
     @target_user.p_admin = params['user']['p_admin']
     @target_user.save!
+    @users = User.user_files
     flash[:notice] = "User created!"
-    render :edit
+    render '/koin/admin'
+  end
+  
+  def delete
   end
   
 end

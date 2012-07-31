@@ -17,7 +17,7 @@ Feature: User/group administration
     When I press the "Create New User/Group" button
     And fill in details for a non-admin user "NonAdmin"
     Then I should see "User created!"
-    And I should see "NonAdmin" exactly 2 times
+    And I should see "NonAdmin" exactly 1 time
     
   Scenario: Delete a group
   

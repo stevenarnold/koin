@@ -1,5 +1,10 @@
 <section id="admin">
     <h1>Administer Users</h1>
+    <h2>
+    <% if flash[:notice] %>
+    <%= flash[:notice] %>
+    <% end %>
+    </h2>
     <%= form_tag '/users/new' do %>
     <p><%= submit_tag 'Create New User/Group', :id => "creategroup" %></p>
     <% end %>
@@ -20,7 +25,8 @@
         <td><%= u.attributes["num"] %></td>
         <td><%= u.attributes["size"] %></td>
         <td><%= u.attributes["u.quota"] ? 0 : "unlimited" %></td>
-        <td><%= link_to "Edit", "/users/edit/#{u.attributes['u.id'].to_i}" %></td>
+        <td><%= link_to "Edit", "/users/edit/#{u.attributes['u.id'].to_i}" %> || 
+            <%= link_to "Delete", "/users/delete/#{u.attributes['u.id'].to_i}" %></td>
       </tr>
       <% end %>
     </table>

@@ -241,16 +241,6 @@ class KoinController < ApplicationController
   
   def admin
     # debugger
-    @users = User.find_by_sql("SELECT    u.id, u.username, count(df.digest) AS num,
-                                         sum(df.size) AS size, u.quota
-                               FROM      users u
-                               LEFT JOIN data_files df
-                               ON        u.id = df.creator_id
-                               UNION ALL
-                               SELECT    u.id, u.username, 0 AS num, 0 AS size, u.quota
-                               FROM      users u
-                               WHERE     u.id NOT IN (SELECT    count(df.creator_id)
-                                                      FROM      data_files df)
-                               ORDER BY  u.username")
+    @users = User.user_files
   end
 end

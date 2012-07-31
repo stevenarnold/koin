@@ -36,6 +36,22 @@ class User < ActiveRecord::Base
   attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
   before_save :set_up_passwd
   
+  def self.user_files
+    User.find_by_sql("SELECT    u.id, u.username, count(df.digest) AS num,
+                            sum(df.size) AS size, u.quota
+                  FROM      users u
+                  LEFT JOIN data_files df
+                  ON        u.id = df.creator_id
+                  WHERE     u.id IN (SELECT    count(df.creator_id)
+                                     FROM      data_files df)
+                  UNION ALL
+                  SELECT    u.id, u.username, 0 AS num, 0 AS size, u.quota
+                  FROM      users u
+                  WHERE     u.id NOT IN (SELECT    count(df.creator_id)
+                                         FROM      data_files df)
+                  ORDER BY  u.username")
+  end
+  
   # Return all ancestors of the current entity
   def all_ancestors(ancestors=[])
     # Assumes only one parent
