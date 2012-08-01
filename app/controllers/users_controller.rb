@@ -53,6 +53,13 @@ class UsersController < ApplicationController
   end
   
   def delete
+    debugger
+    id = params[:id]
+    user = User.find(id.to_i)
+    user.delete
+    @users = User.user_files
+    flash[:notice] = "User created!"
+    render '/koin/admin'
   end
   
 end

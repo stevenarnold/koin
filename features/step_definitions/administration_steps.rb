@@ -43,4 +43,9 @@ Then /^I should see "([^"]*)" exactly ([^ ]+) times?$/ do |string, num|
   page.html.scan(/#{string}/).length.should == num.to_i
 end
 
+When /^select the user "([^"]*)" to delete$/ do |user|
+  u = User.find_by_username(user)
+  find(:css,"#delete_#{u.id}").click
+end
+
 

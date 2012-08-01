@@ -23,7 +23,6 @@ Feature: User/group administration
   
     I should be able to pick a group and delete it
     
-    When I press the "Delete a User/Group" button
     And select the user "secondary" to delete
     Then I should not see "secondary"
     
