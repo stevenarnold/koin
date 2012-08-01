@@ -48,4 +48,16 @@ When /^select the user "([^"]*)" to delete$/ do |user|
   find(:css,"#delete_#{u.id}").click
 end
 
+And /^select the user "([^"]*)" to edit it$/ do |user|
+  u = User.find_by_username(user)
+  find(:css,"#edit_#{u.id}").click
+end
+
+Then /^I should see that "([^"]*)" is an admin$/ do |arg1|
+  check("user[p_admin]")
+  # debugger
+  click_button "Apply"
+  find(:css, "#user_p_admin").should be_checked
+end
+
 

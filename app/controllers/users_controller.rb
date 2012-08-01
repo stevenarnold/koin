@@ -13,10 +13,11 @@ class UsersController < ApplicationController
   end
   
   def update
+    # debugger
     if @user.is_admin
-      @target_user.quota = params[:users][:quota].to_i
-      @target_user.p_search_all = params[:users][:p_search_all]
-      @target_user.p_admin = params[:users][:p_admin]
+      @target_user.quota = params[:user][:quota].to_i
+      @target_user.p_search_all = params[:user][:p_search_all]
+      @target_user.p_admin = params[:user][:p_admin]
       if params[:password]
         @passwd = params[:password]
       end

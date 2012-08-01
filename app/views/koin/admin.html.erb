@@ -25,7 +25,7 @@
         <td><%= u.attributes["num"] %></td>
         <td><%= u.attributes["size"] %></td>
         <td><%= u.attributes["u.quota"] ? 0 : "unlimited" %></td>
-        <td><%= link_to "Edit", "/users/edit/#{u.attributes['u.id'].to_i}" %> || 
+        <td><%= link_to "Edit", "/users/edit/#{u.attributes['u.id'].to_i}", :id => "edit_#{u.attributes['u.id'].to_i}" %> || 
             <%= link_to "Delete", "/users/delete/#{u.attributes['u.id'].to_i}", :id => "delete_#{u.attributes['u.id'].to_i}" %></td>
       </tr>
       <% end %>

@@ -18,6 +18,13 @@ Feature: User/group administration
     And fill in details for a non-admin user "NonAdmin"
     Then I should see "User created!"
     And I should see "NonAdmin" exactly 1 time
+  
+  Scenario: Edit a group
+  
+    I should be able to edit a group and change its values
+    
+    And select the user "secondary" to edit it
+    Then I should see that "secondary" is an admin
     
   Scenario: Delete a group
   
