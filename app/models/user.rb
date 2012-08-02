@@ -36,6 +36,10 @@ class User < ActiveRecord::Base
   attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
   before_save :set_up_passwd
   
+  scope :all_groups, lambda {
+    find(:all)
+  }
+  
   def self.user_files
     User.find_by_sql("SELECT    u.id, u.username, count(df.digest) AS num,
                             sum(df.size) AS size, u.quota

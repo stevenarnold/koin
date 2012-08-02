@@ -21,6 +21,7 @@ class UsersController < ApplicationController
       if params[:password]
         @passwd = params[:password]
       end
+      add_groups(params)
       @target_user.save!
       flash[:notice] = "User information updated"
     else
@@ -47,6 +48,7 @@ class UsersController < ApplicationController
     @target_user.quota = params['user']['quota']
     @target_user.p_search_all = params['user']['p_search_all']
     @target_user.p_admin = params['user']['p_admin']
+    add_groups(params)
     @target_user.save!
     @users = User.user_files
     flash[:notice] = "User created!"
@@ -54,13 +56,26 @@ class UsersController < ApplicationController
   end
   
   def delete
-    debugger
+    #debugger
     id = params[:id]
     user = User.find(id.to_i)
     user.delete
     @users = User.user_files
     flash[:notice] = "User created!"
     render '/koin/admin'
+  end
+  
+  def add_groups(params)
+    # debugger
+    # Get all the ids to add.  These are in params starting with child_group_.
+    children = params.keys.select {|k|
+      k =~ /child_group_(.*)/
+    }.map {|item|
+      item.gsub(/child_group_(.*)/, "\\1").to_i
+    }
+    children.each do |child|
+      @target_user.child_groups << User.find(child)
+    end
   end
   
 end

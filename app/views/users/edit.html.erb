@@ -26,6 +26,19 @@
     <%= f.check_box :p_admin %>
   </div>
   <div>
+  <h2>Child Groups</h2>
+  <p>
+  <% User.all_groups.each do |group| %>
+  <%   if @target_user.child_groups.include? group %>
+  <%=    check_box_tag "child_group_#{group.id}", "yes", true %>
+  <%   else %>
+  <%=    check_box_tag "child_group_#{group.id}", "no", false %>
+  <%   end %>
+  <span><%= group.username %></span>
+  <% end %>
+  </p>
+  </div>
+  <div>
     <%= f.submit "Apply" %>
   </div>
 <% end %>

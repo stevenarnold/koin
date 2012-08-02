@@ -1,4 +1,4 @@
-Given /^I have a set of users and groups for group testing$/ do
+Given /^I have a set of users and groups/ do
   @primary = make_user('primary')
   @seconday = make_user('secondary')
   @third = make_user('third')

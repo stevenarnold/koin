@@ -48,7 +48,7 @@ When /^select the user "([^"]*)" to delete$/ do |user|
   find(:css,"#delete_#{u.id}").click
 end
 
-And /^select the user "([^"]*)" to edit it$/ do |user|
+And /^(?:I )?select the user "([^"]*)" to edit it$/ do |user|
   u = User.find_by_username(user)
   find(:css,"#edit_#{u.id}").click
 end
@@ -60,4 +60,27 @@ Then /^I should see that "([^"]*)" is an admin$/ do |arg1|
   find(:css, "#user_p_admin").should be_checked
 end
 
+Then /^I should see that "([^"]*)" is (not )?in the group "([^"]*)"$/ do |child, presence, parent|
+  child_group = User.find_by_username(child)
+  if presence == "not "
+    find(:css, "#child_group_#{child_group.id}").should_not be_checked
+  else
+    find(:css, "#child_group_#{child_group.id}").should be_checked
+  end
+end
 
+But /^if I select "([^"]*)" as a group to (add|remove)$/ do |group, action|
+  child_group = User.find_by_username(group)
+  if action == "add"
+    check("child_group_#{child_group.id}")
+  else
+    uncheck("child_group_#{child_group.id}")
+  end
+  click_button "Apply"
+end
+
+Given /^that "([^"]*)" is in the group "([^"]*)"$/ do |child, parent|
+  child = User.find_by_username(child)
+  parent = User.find_by_username(parent)
+  parent.child_groups << child
+end

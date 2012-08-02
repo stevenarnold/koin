@@ -37,18 +37,18 @@ Feature: User/group administration
   
     I should be able to add a user/group to another user/group
     
-    Given I edit the "secondary" user
-    Then I should see that "secondary" is not in the group "third"
+    Given I select the user "secondary" to edit it
+    Then I should see that "third" is not in the group "secondary"
     But if I select "third" as a group to add
-    Then I should see that "secondary" is in the group "third"
+    Then I should see that "third" is in the group "secondary"
   
   Scenario: Remove a user from a group
   
     I should be able to remove a user/group from another user/group
     
-    Given I edit the "secondary" user
-    And I select "third" as a group to add
-    Then I should see that "secondary" is in the group "third"
+    Given that "third" is in the group "secondary"
+    Given I select the user "secondary" to edit it
+    Then I should see that "third" is in the group "secondary"
     But if I select "third" as a group to remove
     Then I should see that "secondary" is not in the group "third"
     

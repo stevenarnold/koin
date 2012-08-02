@@ -27,12 +27,13 @@ def large_file
 end
 
 def upload_file(file, params={})
-  #upload_type="anyone", for_users=[], password=nil)
   # debugger
   upload_type = params.fetch(:upload_type, 'anyone')
   for_users = params.fetch(:for_users, [])
   password = params[:password]
   expiration = params.fetch(:expiration, nil)
+  subject = params.fetch(:subject, nil)
+  description = params.fetch(:description, nil)
   case upload_type
   when "anyone"
     choose("download_perms_anyone")
@@ -50,6 +51,12 @@ def upload_file(file, params={})
   end
   if expiration
     fill_in('expiration', :with => expiration)
+  end
+  if subject
+    fill_in('subject', :with => subject)
+  end
+  if description
+    fill_in('description', :with => description)
   end
   attach_file("upload[datafile]", file)
   click_button "Upload"
