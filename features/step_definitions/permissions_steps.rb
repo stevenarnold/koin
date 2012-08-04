@@ -181,10 +181,17 @@ Then /^I should see the ([^ ]+) page$/ do |the_page|
   end
 end
 
-Given /^I upload a file with a password/ do
+Given /^I upload a file with a password$/ do
   standard_user
   # @them = make_user('them')
   @token = upload_file(test_file("1mbfile.txt"), :password => 'pass')
+end
+
+Given /^I upload a file with a password "([^"]+)" and expiration tomorrow$/ do |pass|
+  standard_user
+  expr = Time.now + 24*60*60  # One day from now
+  #debugger
+  @token = upload_file(test_file("multiple_files.zip"), :password => pass, :expiration => expr)
 end
 
 Given /^I upload a file with an expiration date$/ do
@@ -225,6 +232,12 @@ When /^they enter correct details$/ do
   fill_in("pass", :with => "pass")
   click_button "Submit"
   step %{I should receive a file "1mbfile.txt"}
+end
+
+When /^they enter the password "([^"]+)"$/ do |pass|
+  fill_in("pass", :with => pass)
+  click_button "Submit"
+  step %{I should receive a file "multiple_files.zip"}
 end
 
 But /^(?:if )?the file expires$/ do

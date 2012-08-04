@@ -30,7 +30,7 @@ def upload_file(file, params={})
   # debugger
   upload_type = params.fetch(:upload_type, 'anyone')
   for_users = params.fetch(:for_users, [])
-  password = params[:password]
+  password = params.fetch(:password, nil)
   expiration = params.fetch(:expiration, nil)
   subject = params.fetch(:subject, nil)
   description = params.fetch(:description, nil)
@@ -47,7 +47,7 @@ def upload_file(file, params={})
     end
   end
   if password
-    fill_in("pass", :with => "pass")
+    fill_in("pass", :with => password)
   end
   if expiration
     fill_in('expiration', :with => expiration)

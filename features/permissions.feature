@@ -134,3 +134,14 @@ Feature: Permissions
     And the user attempts to download the file
     Then I should see "not found or permission not granted"
 
+  Scenario: Files with both password and expirations should download
+  
+    If a user uploads a file with both a password and an expiration date, the file
+    should download if the expiration has not passed and the password is correct.
+    
+    Given I upload a file with a password "bytes3(stEEp" and expiration tomorrow
+    And another user attempts to download the file
+    Then they should see a password prompt
+    When they enter the password "bytes3(stEEp"
+    Then they should receive a file "multiple_files.zip"
+

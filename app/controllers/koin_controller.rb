@@ -93,11 +93,16 @@ class KoinController < ApplicationController
   
   def download
     # Download a file by token
-    # debugger
+    #debugger
     @token = params[:token]
-    @path = params.fetch(:path, '') + '.' + params.fetch(:format, '')
+    if params[:path]
+      @path = params.fetch(:path, '') + '.' + params.fetch(:format, '')
+    else
+      @path = nil
+    end
     @df = DataFile.where("token_id = ?", @token)[0]
     if @df && @df.digest.length == 32
+      #debugger
       case @user.can_download(@df, params[:pass])
       when :permission_granted
         if @path && @df.path =~ /\.zip$/
@@ -232,6 +237,7 @@ class KoinController < ApplicationController
       @df = nil
       @error = "Can't upload file: Quota exceeded"
     end
+    #debugger
     respond_to do |format|
       format.html {
         render :index

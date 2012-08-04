@@ -33,12 +33,16 @@ class User < ActiveRecord::Base
   # has_many :child_groups, :through => :child_group_links,
   #          :foreign_key => "child_user_id"
   
-  attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
+  attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota, :logged_in
   before_save :set_up_passwd
   
   scope :all_groups, lambda {
     find(:all)
   }
+  
+  def after_initialize
+    logged_in = false
+  end
   
   def self.user_files
     User.find_by_sql("SELECT    u.id, u.username, count(df.digest) AS num,
@@ -103,27 +107,43 @@ class User < ActiveRecord::Base
     super(*args)
   end
   
+  def _check_permission(data_file)
+    if data_file.p_any_logged_user || data_file.p_upon_token_presentation
+      :permission_granted
+    elsif viewable_files.include?(data_file)
+      :permission_granted
+    else
+      #debugger
+      all_ancestors.each do |ancestor|
+        if ancestor.viewable_files.include?(data_file)
+          return :permission_granted
+        end
+      end
+      # User doesn't have permission to view this file
+      :permission_denied
+    end
+  end
+  
   def can_download(data_file, password)
     # debugger
+    permission_result = _check_permission(data_file)
+    has_permission = permission_result == :permission_granted ?
+                                           true :
+                                           false
     if (!data_file.expiration) || (data_file.expiration > Time.now.localtime)
-      if (!data_file.password) || (data_file.password == password)
-        if data_file.p_any_logged_user || data_file.p_upon_token_presentation
-          :permission_granted
-        elsif viewable_files.include?(data_file)
-          :permission_granted
-        else
-          #debugger
-          all_ancestors.each do |ancestor|
-            if ancestor.viewable_files.include?(data_file)
-              return :permission_granted
-            end
-          end
-          # User doesn't have permission to view this file
-          :permission_denied
-        end
-      else
-        # Password required & incorrect
+      if ((!data_file.password) || (password && data_file.password == password))
+        permission_result
+      # If the user password was correct, we would have gone through the above logic,
+      # but since we didn't, we can test for the case where a password was not
+      # provided, but one is required.
+      elsif has_permission && !password && data_file.password
+        #debugger
         :wrong_password
+      elsif (has_permission && password && data_file.password &&
+            data_file.password != password)
+        :wrong_password
+      else
+        :permission_denied
       end
     else
       # File has expired
