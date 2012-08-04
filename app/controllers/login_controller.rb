@@ -10,13 +10,11 @@ class LoginController < ApplicationController
     if user && pass
       dbuser = User.find_by_username(user)
       dbuser.logged_in = false
-      dbuser.save!
       # debugger
       if dbuser && Digest::MD5.hexdigest(pass + dbuser.salt) == dbuser.enc_passwd
         flash[:notice] = 'Login Successful!'
         session[:user] = @user = dbuser
         @user.logged_in = true
-        @user.save!
         # debugger
         if session[:origpath]
           path = session[:origpath]

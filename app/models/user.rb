@@ -33,7 +33,8 @@ class User < ActiveRecord::Base
   # has_many :child_groups, :through => :child_group_links,
   #          :foreign_key => "child_user_id"
   
-  attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota, :logged_in
+  attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
+  attr_accessor :logged_in
   before_save :set_up_passwd
   
   scope :all_groups, lambda {
