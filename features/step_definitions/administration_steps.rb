@@ -1,3 +1,7 @@
+require 'rspec/expectations'
+require 'rubygems'
+require 'ruby-debug'
+
 Given /^I am logged in as an? ([^ ]+) user$/ do |user_type|
   # debugger
   case user_type
@@ -53,11 +57,13 @@ And /^(?:I )?select the user "([^"]*)" to edit it$/ do |user|
   find(:css,"#edit_#{u.id}").click
 end
 
-Then /^I should see that "([^"]*)" is an admin$/ do |arg1|
-  check("user[p_admin]")
+Then /^I should see that "([^"]*)" is (not )?an admin$/ do |user, state|
   # debugger
-  click_button "Apply"
-  find(:css, "#user_p_admin").should be_checked
+  if state == "not "
+    find(:css, "#user_p_admin").should_not be_checked
+  else
+    find(:css, "#user_p_admin").should be_checked
+  end
 end
 
 Then /^I should see that "([^"]*)" is (not )?in the group "([^"]*)"$/ do |child, presence, parent|
@@ -84,3 +90,25 @@ Given /^that "([^"]*)" is in the group "([^"]*)"$/ do |child, parent|
   parent = User.find_by_username(parent)
   parent.child_groups << child
 end
+
+And /^(?:if )?I toggle the admin status of "([^"]*)" to "([^"]*)" and save$/ do |user, status|
+  user = User.find_by_username(user)
+  #debugger
+  if status == "on"
+    check("user_p_admin")
+  else
+    uncheck("user_p_admin")
+    #find(:css, "#user_p_admin").set(0)
+  end
+  click_button "Apply"
+end
+
+Then /^if I change the quota to "([^"]*)" and save$/ do |quota|
+  fill_in("user_quota", :with => quota)
+  click_button "Apply"
+end
+
+Then /^I should see the quota is set to "([^"]*)"$/ do |quota|
+  find(:css, "#user_quota").value.should == quota
+end
+

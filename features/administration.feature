@@ -24,7 +24,7 @@ Feature: User/group administration
     I should be able to edit a group and change its values
     
     And select the user "secondary" to edit it
-    Then I should see that "secondary" is an admin
+    Then I should see that "secondary" is not an admin
     
   Scenario: Delete a group
   
@@ -57,7 +57,7 @@ Feature: User/group administration
     I should be able to toggle and save settings such as the quota and
     admin privileges of a user.
     
-    Given I edit the "secondary" user
+    Given I select the user "secondary" to edit it
     And I toggle the admin status of "secondary" to "on" and save
     Then I should see that "secondary" is an admin
     But if I toggle the admin status of "secondary" to "off" and save
