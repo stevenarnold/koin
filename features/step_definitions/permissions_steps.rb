@@ -112,17 +112,17 @@ Given /^I am (not )?logged in and I choose to download a file that was saved for
                          quota: 2, salt: "NFTCRHCJ")
   #debugger
   log_in('creator', 'pass')
-  token = upload_small_file("select_users", :for_users => [@intended])
+  @token = upload_small_file("select_users", :for_users => [@intended])
   case user_type
   when "another"
     log_out
     if log_status == 'am'
       log_in('outsider', 'pass')
     end
-    visit "/token/#{token}"
+    visit "/token/#{@token}"
     # debugger
   when "myself"
-    visit "/token/#{token}"
+    visit "/token/#{@token}"
   end
 end
 
@@ -140,7 +140,7 @@ Given /^I am logged in and I choose to download a file that was saved for me by 
   visit "/token/#{token}"
 end
 
-Given /^I upload a file for another user and then download it$/ do
+Given /^I upload a file (with a password )?for (?:a|another) user( and then download it)?$/ do |with_pw, download|
   @creator = FactoryGirl.create(:user, :username => "creator",
                          :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
                          :quota => 2, :salt => "NFTCRHCJ")
@@ -148,8 +148,12 @@ Given /^I upload a file for another user and then download it$/ do
                          :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
                          :quota => 2, :salt => "NFTCRHCJ")
   log_in('creator', 'pass')
-  token = upload_small_file("select_users", :for_users => [@test])
-  visit "/token/#{token}"
+  if with_pw
+    @token = upload_small_file("select_users", :password => 'pass', :for_users => [@test])
+  else
+    @token = upload_small_file("select_users", :for_users => [@test])
+  end
+  visit "/token/#{@token}" if download
 end
 
 Then /^(?:I|they) should receive a file(?: "([^"]*)")?/ do |file|

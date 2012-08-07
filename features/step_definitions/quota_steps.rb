@@ -27,7 +27,7 @@ def large_file
 end
 
 def upload_file(file, params={})
-  # debugger
+  #debugger
   upload_type = params.fetch(:upload_type, 'anyone')
   for_users = params.fetch(:for_users, [])
   password = params.fetch(:password, nil)
@@ -70,9 +70,14 @@ def upload_large_file
 end
 
 def upload_small_file(upload_type, args={})
-  upload_type ||= "anyone"
-  for_users = args.fetch(:for_users, [])
-  upload_file(small_file, :upload_type => upload_type, :for_users => for_users)
+  #debugger
+  args[:for_users] ||= []
+  if args[:for_users].length > 0
+    args[:upload_type] = "select_users"
+  else
+    args[:upload_type] = upload_type || "anyone"
+  end
+  upload_file(small_file, args)
 end
 
 Given /^I am logged in as a guest with a quota$/ do

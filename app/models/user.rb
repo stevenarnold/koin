@@ -126,7 +126,7 @@ class User < ActiveRecord::Base
   end
   
   def can_download(data_file, password)
-    # debugger
+    #debugger
     permission_result = _check_permission(data_file)
     has_permission = permission_result == :permission_granted ?
                                            true :
