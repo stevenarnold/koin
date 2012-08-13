@@ -36,36 +36,40 @@ def upload_file(file, params={})
   description = params.fetch(:description, nil)
   case upload_type
   when "anyone"
-    choose("download_perms_anyone")
+    choose("data_file_p_permissions_anyone")
   when "me"
-    choose("download_perms_me")
+    choose("data_file_p_permissions_me")
   when "select_users"
-    choose("download_perms_specific_users")
+    choose("data_file_p_permissions_specific_users")
     select_list = find('#users_selected')
     for_users.each do |user|
       select_list.select(user.username)
     end
   end
   if password
-    fill_in("pass", :with => password)
+    fill_in("data_file_pass", :with => password)
   end
   if expiration
-    fill_in('expiration', :with => expiration)
+    fill_in('data_file_expiration', :with => expiration)
   end
   if subject
-    fill_in('subject', :with => subject)
+    fill_in('data_file_subject', :with => subject)
   end
   if description
-    fill_in('description', :with => description)
+    fill_in('data_file_description', :with => description)
   end
-  attach_file("upload[datafile]", file)
+  attach_file("data_file[upload]", file)
   click_button "Upload"
+  #debugger
   link_text = find("a[href*='token']").native.attributes["href"].value
   link_text.match(/token\/(.*)/)[1]
 end
 
 def upload_large_file
-  attach_file("upload[datafile]", large_file)
+  # args = {}
+  # args[:upload_type] = 'anyone'
+  # upload_file(large_file, args)
+  attach_file("data_file[upload]", large_file)
   click_button "Upload"
 end
 
@@ -86,7 +90,7 @@ Given /^I am logged in as a guest with a quota$/ do
 end
 
 Given /^I upload a file less than my quota$/ do
-  attach_file("upload[datafile]", small_file)
+  attach_file("data_file_upload", small_file)
   click_button "Upload"
 end
 
@@ -106,6 +110,10 @@ end
 
 Given /^I upload a large file$/ do
   upload_large_file
+end
+
+Given /^I log in as "([^"]*)"$/ do |user|
+  log_in(user)
 end
 
 Given /^I am logged in as an admin with a quota$/ do

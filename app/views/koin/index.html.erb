@@ -3,11 +3,12 @@
         $('#upload_datafile').focus();
       });
     </script>
-    <% if !@error && @df && @user.id == @df.creator_id %>
+    <% #debugger
+       if !@error && @df && @user.id == @df.creator_id %>
     <header>
     File saved under token <%= @df.token_id %> [<a href="http://<%= koin_host %><%= koin_port == '80' ? '' : ':' + koin_port %>/token/<%= @df.token_id %>">link</a>]
     </header>
-    <% else %>
+    <% else %>                                
       <% if @token %>
       <header>
         Token <%= @token %> not found or permission not granted
@@ -22,21 +23,21 @@
     <div class="spacer">
     </div>
     <div>
-      <%= form_tag({controller: 'koin', action: 'uploadFile'}, :multipart => true) do %>
+    <%= form_for(@df, :url => {controller: 'koin', action: 'uploadFile'}) do |f| %>
         <p><label for="upload_file">Select File</label>: 
-        <%= file_field 'upload', 'datafile' %></p>
+        <%= f.file_field :upload %></p>
         <% if !@guest %>
         Allow downloads for this file from:<br />
-        <%= radio_button_tag :download_perms, 'me' %>Only Me<br />
-        <%= radio_button_tag :download_perms, 'anyone', checked: true %>Anyone<br />
-        <%= radio_button_tag :download_perms, 'users' %>Any Logged In User<br />
-        <%= radio_button_tag :download_perms, 'specific_users' %>These Users:
+        <%= f.radio_button :p_permissions, 'me' %>Only Me<br />
+        <%= f.radio_button :p_permissions, 'anyone', checked: true %>Anyone<br />
+        <%= f.radio_button :p_permissions, 'users' %>Any Logged In User<br />
+        <%= f.radio_button :p_permissions, 'specific_users' %>These Users:
         <%= select_tag 'users[selected][]', options_from_collection_for_select(@users, 'id', 'username'), { :multiple => true, :size =>5, :id => "users_selected" } %><br />
         <% end %>
-        Subject: <%= text_field_tag :subject %><br />
-        Description: <%= text_area_tag :description, nil, :rows => 5, :cols => 20 %><br />
-        Optional Password: <%= text_field_tag :pass %><br />
-        Optional Expiration: <%= text_field_tag :expiration %><emphasis>(YYYY-MM-DD HH:MM:SS)</emphasis><br />
+        Subject: <%= f.text_field :subject %><br />
+        Description: <%= f.text_area :description, :rows => 5, :cols => 20 %><br />
+        Optional Password: <%= f.password_field :pass %><br />
+        Optional Expiration: <%= f.text_field :expiration %><emphasis>(YYYY-MM-DD HH:MM:SS)</emphasis><br />
         <%= submit_tag "Upload" %>
       <% end %>
     </div>

@@ -4,6 +4,7 @@ require 'ruby-debug'
 
 def standard_user
   @me = make_user('me')
+  @other = make_user('other')
   log_in('me')
 end
 

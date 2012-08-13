@@ -33,7 +33,8 @@ class User < ActiveRecord::Base
   # has_many :child_groups, :through => :child_group_links,
   #          :foreign_key => "child_user_id"
   
-  attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota
+  attr_accessible :username, :passwd, :p_search_all, :p_admin, :quota, :subject,
+                  :description
   attr_accessor :logged_in
   before_save :set_up_passwd
   
@@ -94,7 +95,8 @@ class User < ActiveRecord::Base
   end
 
   def owns_token(token)
-    df =  DataFile.where("digest LIKE ?", token)[0]
+    # debugger
+    df =  DataFile.where("token_id LIKE ?", token)[0]
     self.id == df.creator_id
   end
 

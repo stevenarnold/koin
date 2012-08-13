@@ -91,7 +91,8 @@ And /^another user has uploaded a file( .+)?$/ do |condition|
 end
 
 And /^I view "([^']+)'s" files$/ do |user|
-  log_in(user, 'pass')
+  #debugger
+  log_in(user)
   click_link "Show my files"
 end
 
@@ -113,6 +114,7 @@ Given /^I am (not )?logged in and I choose to download a file that was saved for
   #debugger
   log_in('creator', 'pass')
   @token = upload_small_file("select_users", :for_users => [@intended])
+  #save_and_open_page
   case user_type
   when "another"
     log_out
@@ -141,17 +143,12 @@ Given /^I am logged in and I choose to download a file that was saved for me by 
 end
 
 Given /^I upload a file (with a password )?for (?:a|another) user( and then download it)?$/ do |with_pw, download|
-  @creator = FactoryGirl.create(:user, :username => "creator",
-                         :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
-                         :quota => 2, :salt => "NFTCRHCJ")
-  @test = FactoryGirl.create(:user, :username => "test",
-                         :enc_passwd => "62361bcc7618023cab2dd8fd4e3887d9",
-                         :quota => 2, :salt => "NFTCRHCJ")
-  log_in('creator', 'pass')
+  standard_user
+  log_in('me', 'pass')
   if with_pw
-    @token = upload_small_file("select_users", :password => 'pass', :for_users => [@test])
+    @token = upload_small_file("select_users", :password => 'pass', :for_users => [@other])
   else
-    @token = upload_small_file("select_users", :for_users => [@test])
+    @token = upload_small_file("select_users", :for_users => [@other])
   end
   visit "/token/#{@token}" if download
 end
@@ -213,6 +210,8 @@ And /^(?:another|the) user ("[^"]+" )?attempts to download the file/ do |user|
   if user && !user.empty?
     user.gsub!(/"/, '').gsub!(/ /, '')
     log_in(user)
+  else
+    log_in("other")
   end
   visit "/token/#{@token}"
 end

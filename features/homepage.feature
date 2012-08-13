@@ -28,6 +28,6 @@ Feature: Homepage
     Given I have a set of users and groups
     And I log in as "primary"
     And I upload a file with a subject and a description
-    And I edit the file
+    And I change the subject and description
     Then I should see the subject and description that I saved
     

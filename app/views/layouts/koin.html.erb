@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Koin</title>
+  <%= stylesheet_link_tag    "application" %>
+  <%= stylesheet_link_tag    "admin" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+    <header id="first-header">
+      <h1><%= @action %></h1>
+      <span>
+        <span>
+        <% if logged_user != "guest" %>
+        Welcome, <%= logged_user %> ||
+        <a href="/">Share files</a> ||
+        <% elsif Koin::Application::ALLOW_GUEST == true %>
+        Welcome, <%= logged_user %> ||
+        <a href="/">Share files</a> ||
+        <% end %>
+          <% if is_admin? %>
+            <a href="/koin/admin">Administer users</a> ||
+          <% end %>
+          <% if is_authenticated? %>
+            <a href="/koin/show">Show my files</a> ||
+            <a href="/login">Log In As Another User</a>
+          <% else %>
+            <a href="/login">Log In</a>
+          <% end %>
+        </span>
+      </span>
+    </header>
+
+<%= yield %>
+
+</body>
+</html>

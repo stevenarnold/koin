@@ -9,11 +9,12 @@ class KoinController < ApplicationController
   before_filter :get_user_from_cookie, :only => [:download, :edit,
                       :uploadFile, :show, :index, :admin]
   before_filter :get_token, :only => :download
-  before_filter :get_datafile_from_token, :only => :edit
+  before_filter :get_datafile_from_token, :only => [:edit]
   before_filter :get_users #, :only => [:index, :show, :download, :edit, :uploadFile]
   before_filter :get_action
   before_filter :require_logon
   before_filter :require_admin, :only => [:admin]
+  before_filter :updateFile, :only => [:uploadFile]
   
   def require_logon
     #debugger
@@ -61,13 +62,14 @@ class KoinController < ApplicationController
   end
 
   def get_token(token=false)
-    @token = token || params[:token]
+    @token = token || params[:token] || params[:data_file][:token_id] || @token
   end
 
   def get_datafile_from_token(token=false)
+    #debugger
     get_token(token)
     begin
-      @df = DataFile.where("digest LIKE ?", @token)[0]
+      @df = DataFile.where("token_id LIKE ?", @token)[0]
     rescue
       @df = false
     end
@@ -75,6 +77,7 @@ class KoinController < ApplicationController
   
   def index
     # debugger
+    @df = DataFile.new
     case session[:next_action]
     when 'show'
       session.delete(:next_action)
@@ -93,7 +96,7 @@ class KoinController < ApplicationController
   
   def download
     # Download a file by token
-    #debugger
+    # debugger
     @token = params[:token]
     if params[:path]
       @path = params.fetch(:path, '') + '.' + params.fetch(:format, '')
@@ -147,7 +150,12 @@ class KoinController < ApplicationController
   def edit
     # The user is requesting to edit the resource.  This is only
     # allowed if the user is the user who posted it, or an admin.
-    if @df && (@user.is_admin || @user.owns_token(@token))
+    #debugger
+    updateFile unless request.get?
+    get_data_file_from_token unless @df
+    @action = "Edit File"
+    # debugger
+    if @df && (@user.is_admin || @user.owns_token(@token)) && @df.save!
       respond_to do |format|
         format.html {
           render :edit
@@ -171,8 +179,8 @@ class KoinController < ApplicationController
   #   - View any files posted by others users for logged-in users;
   #   - View any files posted by guests
   def show
-    # debugger
-    @action= "View Files"
+    #debugger
+    @action = "View Files"
     if !@user.p_admin && params[:user] && params[:user] != @user.username
       session[:next_action] = 'show'
       redirect_to :controller => :login, :action => :index
@@ -191,13 +199,30 @@ class KoinController < ApplicationController
       render :index
     end
   end
-
-  def uploadFile
-    # Figure out the available space for this user
-    available = @user.available
-    @df = DataFile.new
-    upload = params[:upload]
-    parm = params[:download_perms] || 'anyone'
+  
+  def updateFile
+    #debugger
+    @available = @user.available
+    @upload = params[:data_file]
+    if @upload
+      @df = DataFile.new
+    else
+      get_datafile_from_token
+    end
+    #debugger
+    parm = params[:data_file][:p_permissions] ||'anyone'
+    password = params.fetch(:data_file, {}).delete(:pass)
+    @df.password = password if password != ""
+    # debugger
+    if @df.update_attributes(params[:data_file])
+      # @df.subject = params[:subject]
+      # @df.description = params[:description]
+      @df.creator_id ||= @user.id
+    else
+      flash[:error] = "File data could not be saved."
+      render :index
+      return
+    end
     #debugger
     case parm
     when 'me'
@@ -222,27 +247,39 @@ class KoinController < ApplicationController
         @df.viewers << User.find(id.to_i)
       end
     end
-    @df.creator_id = @user.id
-    if params[:pass] != ""
-      @df.password = params[:pass]
-    end
-    if params[:expiration] != ""
-      @df.expiration = params[:expiration]
-    end
-    begin
-      #debugger
-      @df.capture_file(upload, available)
+    # if params[:expiration] != ""
+    #   @df.expiration = params[:expiration]
+    # end
+  end
+
+  def uploadFile
+    # Figure out the available space for this user
+    #debugger
+    if @upload
+      begin
+        #debugger
+        @df.capture_file(@upload, @available)
+        @df.save!
+      rescue DataFile::OverQuotaError => e
+        @df = DataFile.new
+        @error = "Can't upload file: Quota exceeded"
+      end
+      respond_to do |format|
+        format.html {
+          render :index
+        }
+      end
+    else
       @df.save!
-    rescue DataFile::OverQuotaError => e
-      @df = nil
-      @error = "Can't upload file: Quota exceeded"
+      respond_to do |format|
+        format.html {
+          @action = "Edit File"
+          flash[:notice] = "File data saved successfully."
+          render :edit
+        }
+      end
     end
     #debugger
-    respond_to do |format|
-      format.html {
-        render :index
-      }
-    end
   end
   
   def admin

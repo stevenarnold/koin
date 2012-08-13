@@ -1,24 +1,25 @@
-<html>
-  <head>
-    <title>Edit Resource</title>
-  </head>
-  <body>
-    <header id="first-header">
-      <h1><%= @action %></h1>
-      <span>
-        Welcome, <%= @user.username %> || 
-        <% if @user.username == 'guest' %>
-          <a href="/login">Log In</a>
-        <% else %>
-          <a href="/login">Log In As Another User</a>
-        <% end %>
-      </span>
+<% if flash[:notice] %>
+    <header>
+      <emphasis><%= flash[:notice] %> [<a href="http://<%= koin_host %><%= koin_port == '80' ? '' : ':' + koin_port %>/token/<%= @df.token_id %>">link</a>]</emphasis>
     </header>
+    <br />
+<% end %>
     <div class="spacer">
     </div>
     <div>
-      <%= label_tag :file_name %><%= @df.path %>
+      <%= form_for(@df, :url => { :controller => :koin, :action => :edit }) do |f| %>
+        <%= f.hidden_field(:token_id) %>
+        Allow downloads for this file from:<br />
+        <%= f.radio_button :p_permissions, 'me' %>Only Me<br />
+        <%= f.radio_button :p_permissions, 'anyone' %>Anyone<br />
+        <%= f.radio_button :p_permissions, 'users' %>Any Logged In User<br />
+        <%= f.radio_button :p_permissions, 'specific_users' %>These Users:
+        <%= select_tag 'users[selected][]', options_from_collection_for_select(@users, 'id', 'username'), { :multiple => true, :size =>5, :id => "users_selected" } %><br />
+        Subject: <%= f.text_field :subject %><br />
+        Description: <%= f.text_area :description, :rows => 5, :cols => 20 %><br />
+        Optional Password: <%= f.password_field :pass %><br />
+        Optional Expiration: <%= f.text_field :expiration %><emphasis>(YYYY-MM-DD HH:MM:SS)</emphasis><br />
+        <%= f.submit "Apply" %>
+      <% end %>
     </div>
-  </body>
-</html>
 

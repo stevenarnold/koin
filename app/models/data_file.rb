@@ -7,7 +7,10 @@ class DataFile < ActiveRecord::Base
   has_many :viewers, :foreign_key => "user_id",
            :through => :permitted_uses, :source => :user
   
-  attr_accessible :path, :digest, :token_id
+  attr_accessible :path, :digest, :token_id, :description, :subject,
+                  :creator_id
+  attr_accessor :p_permissions
+  # attr_accessor :path, :digest, :token_id
 
   class OverQuotaError < StandardError
     attr_accessor :available
@@ -16,7 +19,7 @@ class DataFile < ActiveRecord::Base
   def capture_file(upload, available)
     # Get the MD5 of the file and return the fetch key
     self.token_id = UUID.new.generate
-    name =  upload['datafile'].original_filename
+    name =  upload['upload'].original_filename
     directory = "#{Rails.root}/public/data/#{self.token_id}"
     # create the directory
     Dir::mkdir(directory)
@@ -27,7 +30,7 @@ class DataFile < ActiveRecord::Base
     amt_to_read = 1000000
     # debugger
     file_content = ""
-    while new_content = upload['datafile'].read(amt_to_read)
+    while new_content = upload['upload'].read(amt_to_read)
       file_content += new_content
       if file_content.length > available
         raise DataFile::OverQuotaError, available
@@ -38,6 +41,10 @@ class DataFile < ActiveRecord::Base
     self.size = File.stat(self.path).size
     self.digest = Digest::MD5.hexdigest(file_content)
     # Quota handling.  Start by just getting the size.
+  end
+  
+  def multiple_viewers?
+    viewers.length > 0 ? true : false
   end
 end
 

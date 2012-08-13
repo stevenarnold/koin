@@ -27,6 +27,7 @@ Koin::Application.routes.draw do
   match 'users/delete/(:id)' => 'users#delete'
   
   resources :users
+  resources :data_files
   
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
