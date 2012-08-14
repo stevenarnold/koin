@@ -20,6 +20,11 @@ Then /^(?:if )?I visit the admin link(?: manually)?$/ do
   visit '/koin/admin'
 end
 
+And /^I edit the user "([^\"]*)"$/ do |user|
+  user = User.find_by_username(user)
+  visit "/users/edit/#{user.id}"
+end
+
 Then /^(?:if )?I log in as the admin user$/ do
   log_in('admin')
   # debugger

@@ -40,5 +40,6 @@
   </div>
   <div>
     <%= f.submit "Apply" %>
+    <%= link_to("Disable", "/users/disable/#{@target_user.id}", :id => "disable_#{@target_user.id}", :method => :delete, :confirm => "Are you sure?") %>
   </div>
 <% end %>
