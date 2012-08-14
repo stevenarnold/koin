@@ -77,5 +77,24 @@ Feature: User/group administration
     And I should see "secondary"
     And I should see "third"
     
+  Scenario: An admin should be able to disable a user
+  
+    If an admin disables a user, the user cannot log in, and no one except an
+    admin can download the disabled user's files.
+  
+    Given the user "secondary" uploads a file
+    And I log in as the admin user
+    And I visit the admin link
+    And I disable the user "secondary"
+    And the user "secondary" attempts to log in
+    Then they should see "Incorrect username or password"
+    And the user "third" logs in
+    And they attempt to download the file
+    Then they should see "not found or permission not granted"
+    But if I log in as the admin user
+    And I attempt to download the file
+    Then I should receive a file "1mbfile.txt"
+
+    
 
 

@@ -38,10 +38,11 @@ class KoinController < ApplicationController
       render :create_admin
       return
     end
-    u = User.new(:passwd => params[:admin_password])
-    u.username = params[:admin_username]
-    u.p_admin = 't'
-    u.save!
+    @user = User.new(:passwd => params[:admin_password])
+    @user.username = params[:admin_username]
+    @user.p_admin = 't'
+    @user.save!
+    @df = DataFile.new
     render :controller => :login, :action => :index
   end
  

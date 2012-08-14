@@ -48,14 +48,14 @@ class User < ActiveRecord::Base
   
   def self.user_files
     User.find_by_sql("SELECT    u.id, u.username, count(df.digest) AS num,
-                            sum(df.size) AS size, u.quota
+      sum(df.size) AS size, u.quota, u.enc_passwd
                   FROM      users u
                   LEFT JOIN data_files df
                   ON        u.id = df.creator_id
                   WHERE     u.id IN (SELECT    count(df.creator_id)
                                      FROM      data_files df)
                   UNION ALL
-                  SELECT    u.id, u.username, 0 AS num, 0 AS size, u.quota
+                  SELECT    u.id, u.username, 0 AS num, 0 AS size, u.quota, u.enc_passwd
                   FROM      users u
                   WHERE     u.id NOT IN (SELECT    count(df.creator_id)
                                          FROM      data_files df)
@@ -111,7 +111,9 @@ class User < ActiveRecord::Base
   end
   
   def _check_permission(data_file)
-    if data_file.p_any_logged_user || data_file.p_upon_token_presentation
+    if !is_admin && User.find(data_file.creator_id).enc_passwd == ""
+      :permission_denied
+    elsif data_file.p_any_logged_user || data_file.p_upon_token_presentation
       :permission_granted
     elsif viewable_files.include?(data_file)
       :permission_granted

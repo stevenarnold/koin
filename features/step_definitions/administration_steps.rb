@@ -16,11 +16,11 @@ Given /^I am logged in as an? ([^ ]+) user$/ do |user_type|
   end
 end
 
-Then /^if I visit the admin link manually$/ do
+Then /^(?:if )?I visit the admin link(?: manually)?$/ do
   visit '/koin/admin'
 end
 
-Then /^if I log in as the admin user$/ do
+Then /^(?:if )?I log in as the admin user$/ do
   log_in('admin')
   # debugger
 end
@@ -110,5 +110,24 @@ end
 
 Then /^I should see the quota is set to "([^"]*)"$/ do |quota|
   find(:css, "#user_quota").value.should == quota
+end
+
+And /^I disable the user "([^"]*)"$/ do |user|
+  u = User.find_by_username(user)
+  find(:css,"#disable_#{u.id}").click
+end
+
+And /^the user "([^"]*)" (?:attempts to )?logs? in$/ do |user|
+  log_in(user)
+end
+
+Given /^the user "([^"]*)" uploads a file$/ do |user|
+  log_in(user)
+  @token = upload_small_file('anyone')
+end
+
+Then /^(?:they|I) attempt to download the file$/ do
+  #debugger
+  visit "/token/#{@token}"
 end
 

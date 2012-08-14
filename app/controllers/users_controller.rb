@@ -66,6 +66,16 @@ class UsersController < ApplicationController
     render '/koin/admin'
   end
   
+  def disable
+    id = params[:id]
+    user = User.find(id.to_i)
+    user.enc_passwd = ""
+    user.save!
+    @users = User.user_files
+    flash[:notice] = "User disabled"
+    render '/koin/admin'
+  end
+  
   def add_groups(params)
     # debugger
     # Get all the ids to add.  These are in params starting with child_group_.
