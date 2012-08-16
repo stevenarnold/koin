@@ -122,12 +122,20 @@ Feature: User/group administration
     And I attempt to download the file
     Then I should receive a file "1mbfile.txt"
     
-  Scenario: A non-admin should not be able to disable or delete a user
+  Scenario: A non-admin should not be able to delete a user
 
     Given I am logged in as a non-admin user
     And I send a form manually to delete the user "secondary"
     And I log in as the admin user
     And I visit the admin link
     Then I should see "secondary"
+    
+  Scenario: A non-admin should not be able to disable a user
+
+    Given I am logged in as a non-admin user
+    And I send a form manually to disable the user "secondary"
+    And I log in as the admin user
+    And I visit the admin link
+    Then I should not see "Enable"
 
 
