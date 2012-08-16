@@ -6,7 +6,7 @@ class UsersController < ApplicationController
   before_filter :get_user_from_param_id, :except => [:new, :create]
   before_filter :get_user_from_cookie
   before_filter :edit_action, :only => [:update, :show, :edit]
-  before_filter :require_admin, :only => [:new, :create]
+  before_filter :require_admin, :only => [:new, :create, :delete, :disable]
   
   def edit_action
     @action = "Edit User #{@target_user.username}"

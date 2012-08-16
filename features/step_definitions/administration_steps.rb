@@ -117,9 +117,16 @@ Then /^I should see the quota is set to "([^"]*)"$/ do |quota|
   find(:css, "#user_quota").value.should == quota
 end
 
-And /^I disable the user "([^"]*)"$/ do |user|
+And /^I (disable|delete) the user "([^"]*)"$/ do |action, user|
   u = User.find_by_username(user)
-  find(:css,"#disable_#{u.id}").click
+  case action
+  when "disable"
+    find(:css,"#disable_#{u.id}").click
+  when "delete"
+    find(:css,"#delete_#{u.id}").click
+  else
+    fail
+  end
 end
 
 And /^the user "([^"]*)" (?:attempts to )?logs? in$/ do |user|
@@ -134,5 +141,10 @@ end
 Then /^(?:they|I) attempt to download the file$/ do
   #debugger
   visit "/token/#{@token}"
+end
+
+And /^I send a form manually to delete the user "([^"]*)"$/ do |user|
+  user = User.find_by_username(user)
+  visit "/users/delete/#{user.id}"
 end
 

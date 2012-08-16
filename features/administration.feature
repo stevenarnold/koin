@@ -33,6 +33,15 @@ Feature: User/group administration
     And select the user "secondary" to delete
     Then I should not see "secondary"
     
+  Scenario: Delete a group from the group page
+  
+    After visiting the group page, I should be able to delete a user by clicking
+    a button do to so.
+    
+    Given I edit the user "secondary"
+    And I delete the user "secondary"
+    Then I should not see "secondary"
+    
   Scenario: Add a user to a group
   
     I should be able to add a user/group to another user/group
@@ -115,7 +124,10 @@ Feature: User/group administration
     
   Scenario: A non-admin should not be able to disable or delete a user
 
-    Given I log in as a non-admin user
-    # More...
+    Given I am logged in as a non-admin user
+    And I send a form manually to delete the user "secondary"
+    And I log in as the admin user
+    And I visit the admin link
+    Then I should see "secondary"
 
 
