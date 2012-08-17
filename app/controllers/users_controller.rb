@@ -69,10 +69,22 @@ class UsersController < ApplicationController
   def disable
     id = params[:id]
     user = User.find(id.to_i)
+    user.saved_enc_passwd = user.enc_passwd
     user.enc_passwd = ""
     user.save!
     @users = User.user_files
     flash[:notice] = "User disabled"
+    render '/koin/admin'
+  end
+  
+  def enable
+    id = params[:id]
+    user = User.find(id.to_i)
+    user.enc_passwd = user.saved_enc_passwd if user.saved_enc_passwd
+    user.saved_enc_passwd = nil
+    user.save!
+    @users = User.user_files
+    flash[:notice] = "User enabled"
     render '/koin/admin'
   end
   

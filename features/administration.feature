@@ -137,5 +137,13 @@ Feature: User/group administration
     And I log in as the admin user
     And I visit the admin link
     Then I should not see "Enable"
+    
+  Scenario: An admin should be able to re-enable a disabled user
+    Given I log in as the admin user
+    And I visit the admin link
+    And I disable the user "secondary"
+    Then I should see "Enable"
+    And if I enable the user "secondary"
+    Then I should not see "Enable"
 
 

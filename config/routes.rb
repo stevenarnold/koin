@@ -26,6 +26,7 @@ Koin::Application.routes.draw do
   match 'users/edit/(:id)' => 'users#edit'
   match 'users/delete/(:id)' => 'users#delete'
   match 'users/disable/(:id)' => 'users#disable'
+  match 'users/enable/(:id)' => 'users#enable'
   
   resources :users
   resources :data_files

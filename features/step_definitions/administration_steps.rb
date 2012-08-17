@@ -129,6 +129,11 @@ And /^I (disable|delete) the user "([^"]*)"$/ do |action, user|
   end
 end
 
+And /^(?:if )?I enable the user "([^"]*)"$/ do |user|
+  u = User.find_by_username(user)
+  find(:css, "#enable_#{u.id}").click
+end
+
 And /^the user "([^"]*)" (?:attempts to )?logs? in$/ do |user|
   log_in(user)
 end

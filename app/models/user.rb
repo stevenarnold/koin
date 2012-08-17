@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
                   FROM      users u
                   WHERE     u.id NOT IN (SELECT    count(df.creator_id)
                                          FROM      data_files df)
-                  ORDER BY  u.username")
+                  ORDER BY  u.username").select {|row| row.attributes['u.id'] != nil}
   end
   
   # Return all ancestors of the current entity
