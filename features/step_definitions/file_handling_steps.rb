@@ -3,8 +3,10 @@ require 'rubygems'
 require 'ruby-debug'
 
 def standard_user
-  @me = make_user('me')
-  @other = make_user('other')
+  if !@me
+    @me = make_user('me')
+    @other = make_user('other')
+  end
   log_in('me')
 end
 

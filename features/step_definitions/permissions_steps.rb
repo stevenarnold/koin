@@ -63,9 +63,9 @@ When /^I sign in with invalid details$/ do
 end
 
 Given /^I am an admin user$/ do
-  @admin = FactoryGirl.create(:user, username: "admin",
-                         enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
-                         p_admin: true, quota: 2, salt: "NFTCRHCJ")
+  #@admin = FactoryGirl.create(:user, username: "admin",
+  #                       enc_passwd: "62361bcc7618023cab2dd8fd4e3887d9",
+  #                       p_admin: true, quota: 2, salt: "NFTCRHCJ")
 end
 
 Given /^I am not an admin user$/ do
