@@ -10,6 +10,7 @@ Koin::Application.routes.draw do
   match 'koin/index' => 'koin#index'
   match 'koin/uploadFile' => 'koin#uploadFile'
   match 'edit/:token' => 'koin#edit'
+  match 'token/index/:token(/*path)' => 'koin#zipindex'
   match 'token/:token(/*path)' => 'koin#download'
   match 'login' => 'login#auth'
   match 'login/index' => 'login#index'

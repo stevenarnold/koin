@@ -43,6 +43,14 @@ And /^the file should not be in the filesystem$/ do
   File.exist?(token_file).should == false
 end
 
+Given /^I view the index for that zip file$/ do
+  visit "/token/index/#{@token}"
+end
+
+When /^I click the link "([^"]*)"$/ do |link_name|
+  #debugger
+  click_link link_name
+end
 
 
 

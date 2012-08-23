@@ -8,13 +8,27 @@ class KoinController < ApplicationController
   before_filter :setup
   before_filter :get_user_from_cookie, :only => [:download, :edit,
                       :uploadFile, :show, :index, :admin]
-  before_filter :get_token, :only => :download
+  before_filter :get_token, :only => [:download, :zipindex]
   before_filter :get_datafile_from_token, :only => [:edit]
   before_filter :get_users #, :only => [:index, :show, :download, :edit, :uploadFile]
   before_filter :get_action
   before_filter :require_logon
   before_filter :require_admin, :only => [:admin]
   before_filter :updateFile, :only => [:uploadFile]
+  before_filter :get_file_elements, :only => [:zipindex, :download]
+  
+  class ZipFileStub
+    attr_accessor :to_s, :size
+    
+    def initialize(name)
+      @to_s = name.to_s
+      @size = 0
+    end
+    
+    def name_is_directory?
+      true
+    end
+  end
   
   def require_logon
     #debugger
@@ -89,6 +103,86 @@ class KoinController < ApplicationController
       render :admin
     end
   end
+  
+  def get_file_elements
+    @token = params[:token]
+    if params[:path]
+      @path = params.fetch(:path, '') + '.' + params.fetch(:format, '')
+    else
+      @path = nil
+    end
+    @df = DataFile.where("token_id = ?", @token)[0]
+  end
+  
+  def is_leaf?(root, path)
+    #debugger
+    return false if root == path
+    return false if root.length > path.length
+    path = path[root.length, path.length] if path.start_with?(root)
+    return false if not path
+    numslashes = path.scan(/\//).length
+    return false if numslashes > 1
+    return true if numslashes == 0
+    return false if path[-1] != "/"
+    return true
+  end
+  
+  def zipindex
+    @path = params.fetch(:path, '')
+    @path = @path + "/" if @path != "" && @path[-1] != "/"
+    @action = "Viewing '#{File.basename(@df.path)}'"
+    @zipfiles = []
+    @updir, base = File.split(@path)
+    #debugger
+    # Get all files beginning with @path
+    Zip::ZipFile.foreach(@df.path) do |file|
+      fullpath = file.to_s
+      #debugger
+      if is_leaf?(@path, fullpath)
+        @zipfiles << file 
+      end
+    end
+    # link = @zipfiles.min_by{|a| a.to_s.size}
+    # @zipfiles.delete(link)
+    # parent, base = File.split(link.to_s)
+    # if parent == "."
+    #   item = link
+    # else
+    #   item = parent
+    # end
+    # @zipfiles.unshift(ZipFileStub.new(item))
+    
+    # # We want the parent of the original path, so we can go up
+    # if File.split(@path) != '.'
+    #   @zipfiles << ZipFileStub.new("#{File.split(@path)[0]}/")
+    # end
+    # Zip::ZipFile.foreach(@df.path) do |file|
+    #   # Rule: Remove the @path from the beginning of the string, then
+    #   # include any files that do not contain '/' except as the final
+    #   # character
+    #   item = orig = file.to_s
+    #   item.slice!(/^#{@path}\/?/)
+    #   debugger
+    #   if item == orig
+    #     parent = @path
+    #     while true
+    #       parent, base = File.split(parent)
+    #       parent = "\\." if parent == "."
+    #       item.slice!(/^#{parent}\/?/)
+    #       break if parent == "\\." || item != orig
+    #     end
+    #   end
+    #   debugger
+    #   if item == "" && orig.include?(@path)
+    #     num_slashes = item.scan(/\//).length
+    #     if num_slashes == 1 && item[-1] == "/"
+    #       @zipfiles << file
+    #     elsif num_slashes == 0 && item.length > 0
+    #       @zipfiles << file
+    #     end
+    #   end
+    # end
+  end
 
   def not_found
     @error = "not found or permission not granted"
@@ -98,13 +192,6 @@ class KoinController < ApplicationController
   def download
     # Download a file by token
     # debugger
-    @token = params[:token]
-    if params[:path]
-      @path = params.fetch(:path, '') + '.' + params.fetch(:format, '')
-    else
-      @path = nil
-    end
-    @df = DataFile.where("token_id = ?", @token)[0]
     if @df && @df.digest.length == 32
       #debugger
       case @user.can_download(@df, params[:pass])

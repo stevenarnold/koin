@@ -17,7 +17,7 @@ Feature: Handle proper file management
     And I download one of the files using the path "sample1.txt" after the token
     Then I should receive a file "sample1.txt"
 
-  Scenario: List the files within a zip file
+  Scenario: Download the files within a zip file inside a directory
   
     I should be able to list the files for a zip file I have permission to 
     download by using the URL syntax token/list/:token(/:path))
@@ -25,6 +25,29 @@ Feature: Handle proper file management
     Given I upload a zip file that contains multiple files
     And I download one of the files using the path "foobar/dirtext.txt" after the token
     Then I should receive a file "dirtext.txt"
+    
+  Scenario: Display the directory structure of a zip file
+  
+    I should be able to browse a zip file, much like the default index.html of
+    many web servers, go into directories, go up, and choose a file to download.
+    
+    Given I upload a zip file that contains multiple files
+    And I view the index for that zip file
+    Then I should see "Viewing 'multiple_files.zip'"
+    And I should see "multiple_files/"
+    When I click the link "multiple_files/"
+    Then I should see "foobar/"
+    And I should see "sample2.txt"
+    And I should see "sample1.txt"
+    And I should not see "dirtext.txt"
+    When I click the link "foobar/"
+    Then I should see "dirtext.txt"
+    And I should not see "sample1.txt"
+    And I should not see "sample2.txt"
+    When I click the link "Up"
+    Then I should see "foobar/"
+    When I click the link "Up"
+    Then I should see "multiple_files/"
     
   Scenario: Uploading two different files with the same file name
   
