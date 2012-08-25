@@ -1,0 +1,22 @@
+<table>
+  <tr>
+    <th>Name</th><th>Type</th><th>Size (KB)</th>
+  </tr>
+<% 
+   if @updir == '.'
+     updir = ""
+   end
+%>
+  <tr>
+  <td><a href="/token/index/<%= "#{@token}/#{@updir}" %>/">Up</a></td>
+  <td>Dir</td>
+  <td>0</td>
+  </tr>
+<% @zipfiles.each do |file| %>
+  <tr>
+  <td><%= raw file_to_s(file) %></td>
+  <td><%= file_type(file) %></td>
+  <td><%= file_size(file) %></td>
+  </tr>
+<% end %>
+</table>

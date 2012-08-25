@@ -59,5 +59,5 @@ end
 Cucumber::Rails::Database.javascript_strategy = :truncation
 
 After do 
-  `rm -rf #{"#{Rails.root}/public/data/*"}`  #remove test files
+  # `rm -rf #{"#{Rails.root}/public/data/*"}`  #remove test files
 end

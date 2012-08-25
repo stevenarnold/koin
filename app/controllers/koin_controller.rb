@@ -107,7 +107,8 @@ class KoinController < ApplicationController
   def get_file_elements
     @token = params[:token]
     if params[:path]
-      @path = params.fetch(:path, '') + '.' + params.fetch(:format, '')
+      fmt = params.fetch(:format, '')
+      @path = params.fetch(:path, '') + (fmt == "" ? "" : '.' + fmt) 
     else
       @path = nil
     end
@@ -191,19 +192,32 @@ class KoinController < ApplicationController
   
   def download
     # Download a file by token
-    # debugger
+    #debugger
     if @df && @df.digest.length == 32
       #debugger
       case @user.can_download(@df, params[:pass])
       when :permission_granted
         if @path && @df.path =~ /\.zip$/
           # Return the individual file requested from the zip
-          Zip::ZipFile.open(@df.path) do |zipfile|
-            filename = File.basename(@path)
-            zipfile.get_output_stream(filename) do |f|
-              send_data f.read, :filename => filename, :type => "application/octet-stream"
-            end
-          end
+          dirname = File.basename(@df.path)
+          filename = File.basename(@path)
+          path = "#{dirname}/#{filename}"
+          Zip::ZipFile.open(@df.path, Zip::ZipFile::CREATE) {|zipfile|
+            #debugger
+            tmp_path = "tmp/files/data-#{@df.token_id}"
+            tmp = File.new(tmp_path, "w")
+            tmp.write(zipfile.read(@path))
+            tmp.close
+            send_file tmp_path, :filename => filename, :type => "application/octet-stream"
+          }
+
+          #Zip::ZipFile.open(@df.path) do |zipfile|
+          #debugger
+          #filename = File.basename(@path)
+          # zipfile.get_output_stream(@path) do |f|
+          #   debugger
+          #   send_data f.read, :filename => filename, :type => "application/octet-stream"
+          # end
         else
           send_file @df.path, :type => "application/octet-stream"
         end

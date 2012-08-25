@@ -52,5 +52,8 @@ When /^I click the link "([^"]*)"$/ do |link_name|
   click_link link_name
 end
 
-
+And /"([^"]*)" should be (\d+) bytes in size/ do |file, size|
+  #debugger
+  File.stat("tmp/files/data-#{@token}").size.should == size.to_i
+end
 

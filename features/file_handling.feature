@@ -14,7 +14,7 @@ Feature: Handle proper file management
     will return the individual jpg.
     
     Given I upload a zip file that contains multiple files
-    And I download one of the files using the path "sample1.txt" after the token
+    And I download one of the files using the path "multiple_files/sample1.txt" after the token
     Then I should receive a file "sample1.txt"
 
   Scenario: Download the files within a zip file inside a directory
@@ -23,8 +23,9 @@ Feature: Handle proper file management
     download by using the URL syntax token/list/:token(/:path))
     
     Given I upload a zip file that contains multiple files
-    And I download one of the files using the path "foobar/dirtext.txt" after the token
+    And I download one of the files using the path "multiple_files/foobar/dirtext.txt" after the token
     Then I should receive a file "dirtext.txt"
+    And "dirtext.txt" should be 25 bytes in size
     
   Scenario: Display the directory structure of a zip file
   
