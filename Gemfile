@@ -41,5 +41,6 @@ gem 'jquery-rails'
 gem 'ruby-debug19', :require => 'ruby-debug'
 
 # For jruby
+# gem 'ruby-debug'
 # gem 'ruby-debug-base'
-# gem 'ruby-debug-ide'
+gem 'ruby-debug-ide'
