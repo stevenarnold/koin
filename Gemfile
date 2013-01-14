@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.0'
+gem 'rails', '3.2.11'
 gem 'uuid'
 
 # Bundle edge Rails instead:
@@ -10,7 +10,7 @@ gem 'sqlite3', "~> 1.3.6"
 gem 'therubyracer'
 group :test, :development do
   gem "rspec-rails"
-  gem 'turn', '< 0.8.3'
+  gem 'turn'
   gem 'factory_girl_rails'
 end
 gem "capybara"
@@ -24,8 +24,8 @@ gem 'rubyzip'
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails', "  ~> 3.1.0"
-  gem 'coffee-rails', "~> 3.1.0"
+  gem 'sass-rails'
+  gem 'coffee-rails'
   gem 'uglifier'
 end
 
@@ -38,9 +38,9 @@ gem 'jquery-rails'
 # gem 'capistrano'
 
 # To use debugger
-gem 'ruby-debug19', :require => 'ruby-debug'
+# gem 'ruby-debug19', :require => 'ruby-debug'
 
 # For jruby
 # gem 'ruby-debug'
 # gem 'ruby-debug-base'
-gem 'ruby-debug-ide'
+# gem 'ruby-debug-ide'

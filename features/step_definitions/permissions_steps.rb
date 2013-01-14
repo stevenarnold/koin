@@ -1,6 +1,5 @@
 require 'rspec/expectations'
 require 'rubygems'
-require 'ruby-debug'
 
 def log_in(user, pass='pass')
   visit("/login/index")

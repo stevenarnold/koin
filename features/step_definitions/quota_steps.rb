@@ -1,6 +1,5 @@
 require 'rspec/expectations'
 require 'rubygems'
-require 'ruby-debug'
 require 'factory_girl_rails'
 
 FactoryGirl.define do
@@ -59,6 +58,7 @@ def upload_file(file, params={})
     fill_in('data_file_description', :with => description)
   end
   attach_file("data_file[upload]", file)
+  # page.find(:css, "#sections input[type=submit]").click
   click_button "Upload"
   #debugger
   link_text = find("a[href*='token']").native.attributes["href"].value

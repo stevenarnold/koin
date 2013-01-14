@@ -1,10 +1,37 @@
     <script type="text/javascript">
       $(document).ready(function () {
+        var state_moving_to = "closed";
         $('#upload_datafile').focus();
+        $('#users_selected').textext({
+          plugins: 'tags prompt focus autocomplete filter',
+          prompt: 'Enter user...'
+        }).bind('getSuggestions', function(e, data) {
+          var list = [ <%= raw @delim_users %> ],
+              textext = $(e.target).textext()[0],
+              query = (data ? data.query : '') || '';
+          $('#data_file_p_permissions_specific_users').attr('checked', 'checked');
+          $(this).trigger('setSuggestions', { result: textext.itemManager().filter(list, query) });
+        });
+        $('#sections').togglepanels();
+        $('#sections h3:first-child').trigger('click');
+        $('#sections h3:eq(1)').on('click', function () {
+          if ($(this).hasClass('ui-state-active')) {
+            state_moving_to = "open";
+          } else {
+            state_moving_to = "closed";
+          }
+          $.ajax({
+            url: "/koin/set_advanced_state?state=" + state_moving_to
+          });
+        });
+        if (state_moving_to == "open") {
+          $('#sections h3:eq(1)').trigger('click');
+        }
       });
     </script>
-    <% #debugger
-       if !@error && @df && @user.id == @df.creator_id %>
+    <%
+       if !@error && @df && @user.id == @df.creator_id
+    %>
     <header>
     File saved under token <%= @df.token_id %> [<a href="http://<%= koin_host %><%= koin_port == '80' ? '' : ':' + koin_port %>/token/<%= @df.token_id %>">link</a>]
     </header>
@@ -22,22 +49,28 @@
     <% end %>
     <div class="spacer">
     </div>
-    <div>
-    <%= form_for(@df, :url => {controller: 'koin', action: 'uploadFile'}) do |f| %>
-        <p><label for="upload_file">Select File</label>: 
+    <div id="sections">
+      <h3><a href="#">File Selection</a></h3>
+      <%= form_for(@df, :url => {controller: 'koin', action: 'uploadFile'}) do |f| %>
+      <div>
+        <p><label for="upload_file">Select File</label>:
         <%= f.file_field :upload %></p>
+      </div>
+      <h3><a href="#">Advanced</a></h3>
+      <div>
         <% if !@guest %>
         Allow downloads for this file from:<br />
         <%= f.radio_button :p_permissions, 'me' %>Only Me<br />
         <%= f.radio_button :p_permissions, 'anyone', checked: true %>Anyone<br />
         <%= f.radio_button :p_permissions, 'users' %>Any Logged In User<br />
         <%= f.radio_button :p_permissions, 'specific_users' %>These Users:
-        <%= select_tag 'users[selected][]', options_from_collection_for_select(@users, 'id', 'username'), { :multiple => true, :size =>5, :id => "users_selected" } %><br />
+        <%= text_area_tag 'users[selected][]', nil, rows: 5, cols: 25, id: "users_selected" %><br />
         <% end %>
         Subject: <%= f.text_field :subject %><br />
         Description: <%= f.text_area :description, :rows => 5, :cols => 20 %><br />
         Optional Password: <%= f.password_field :pass %><br />
         Optional Expiration: <%= f.text_field :expiration %><emphasis>(YYYY-MM-DD HH:MM:SS)</emphasis><br />
+      </div>
         <%= submit_tag "Upload" %>
       <% end %>
     </div>

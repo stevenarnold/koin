@@ -1,6 +1,5 @@
 require 'rspec/expectations'
 require 'rubygems'
-require 'ruby-debug'
 
 Given /^cucumber is properly initialized$/ do
   @admin = User.new(:passwd => 'pass')

@@ -41,6 +41,8 @@ class User < ActiveRecord::Base
   scope :all_groups, lambda {
     find(:all)
   }
+
+  # validates :advanced_state, :inclusion => { :in => %w(open closed) }, :message => "State contains an invalid value"
   
   def after_initialize
     logged_in = false
