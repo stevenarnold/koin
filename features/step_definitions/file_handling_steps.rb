@@ -1,6 +1,6 @@
 require 'rspec/expectations'
 require 'rubygems'
-require 'ruby-debug'
+# require 'ruby-debug'
 
 def standard_user
   if !@me

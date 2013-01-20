@@ -1,6 +1,6 @@
 require 'rspec/expectations'
 require 'rubygems'
-require 'ruby-debug'
+# require 'ruby-debug'
 require 'factory_girl_rails'
 
 FactoryGirl.define do

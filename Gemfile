@@ -10,7 +10,7 @@ gem 'sqlite3', "~> 1.3.6"
 gem 'therubyracer'
 group :test, :development do
   gem "rspec-rails"
-  gem 'turn', '< 0.8.3'
+  gem 'turn'
   gem 'factory_girl_rails'
 end
 gem "capybara"
@@ -38,9 +38,9 @@ gem 'jquery-rails'
 # gem 'capistrano'
 
 # To use debugger
-gem 'ruby-debug19', :require => 'ruby-debug'
+# gem 'ruby-debug19', :require => 'ruby-debug'
 
 # For jruby
 # gem 'ruby-debug'
 # gem 'ruby-debug-base'
-gem 'ruby-debug-ide'
+# gem 'ruby-debug-ide'
