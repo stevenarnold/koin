@@ -15,11 +15,17 @@ class DataFile < ActiveRecord::Base
   class OverQuotaError < StandardError
     attr_accessor :available
   end
+
+  class NoFileSpecifiedError < StandardError; end
   
   def capture_file(upload, available)
     # Get the MD5 of the file and return the fetch key
     self.token_id = UUID.new.generate
-    name =  upload['upload'].original_filename
+    begin
+      name =  upload['upload'].original_filename
+    rescue NoMethodError
+      raise DataFile::NoFileSpecifiedError
+    end
     directory = "#{Rails.root}/public/data/#{self.token_id}"
     # create the directory
     Dir::mkdir(directory)
@@ -28,7 +34,6 @@ class DataFile < ActiveRecord::Base
     # write the file
     post = File.open(self.path, "wb")
     amt_to_read = 1000000
-    # debugger
     file_content = ""
     while new_content = upload['upload'].read(amt_to_read)
       file_content += new_content

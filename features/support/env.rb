@@ -7,7 +7,7 @@
 require 'cucumber/rails'
 require 'factory_girl'
 require 'factory_girl_rails'
-require 'factory_girl/step_definitions'
+# require 'factory_girl/step_definitions'
 # FactoryGirl.find_definitions
 
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In

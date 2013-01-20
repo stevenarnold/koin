@@ -8,10 +8,8 @@ class ApplicationController < ActionController::Base
   end
     
   def get_user_from_cookie
-    #@user = User.where("cookie_exp > date('now') and cookie = ?", cookies[:login])[0]
     @user = session[:user]
     @guest = true
-    #logger.debug("user = #{@user}")
     if @user
       @guest = false
     else

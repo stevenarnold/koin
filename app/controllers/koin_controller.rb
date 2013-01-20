@@ -1,5 +1,6 @@
 require 'digest/md5'
 require 'zip/zip'
+require 'json'
 require 'fileutils'
 
 class KoinController < ApplicationController
@@ -7,7 +8,7 @@ class KoinController < ApplicationController
   
   before_filter :setup
   before_filter :get_user_from_cookie, :only => [:download, :edit,
-                      :uploadFile, :show, :index, :admin]
+                      :uploadFile, :show, :index, :admin, :set_advanced_state]
   before_filter :get_token, :only => [:download, :zipindex]
   before_filter :get_datafile_from_token, :only => [:edit]
   before_filter :get_users #, :only => [:index, :show, :download, :edit, :uploadFile]
@@ -31,7 +32,6 @@ class KoinController < ApplicationController
   end
   
   def require_logon
-    #debugger
     if ((!@user || @user.username == 'guest') && !Koin::Application::ALLOW_GUEST)
       redirect_to :controller => :login, :action => :index
     end
@@ -42,8 +42,16 @@ class KoinController < ApplicationController
   end
   
   def get_users
-    # debugger
     @users = User.order(:username)
+    esc_users = @users.map {|u| u.username.gsub("'", "\\'")}
+    @delim_users = %Q{'#{esc_users.join("', '")}'}
+  end
+
+  def advanced_state
+    state_moving_to = params[:state] || @user.advanced_state || "closed"
+    @user.advanced_state = state_moving_to
+    @user.save!
+    render nothing: true, status: 200
   end
 
   def initadmin
@@ -81,7 +89,6 @@ class KoinController < ApplicationController
   end
 
   def get_datafile_from_token(token=false)
-    #debugger
     get_token(token)
     begin
       @df = DataFile.where("token_id LIKE ?", @token)[0]
@@ -91,7 +98,6 @@ class KoinController < ApplicationController
   end
   
   def index
-    # debugger
     @df = DataFile.new
     case session[:next_action]
     when 'show'
@@ -143,46 +149,6 @@ class KoinController < ApplicationController
         @zipfiles << file 
       end
     end
-    # link = @zipfiles.min_by{|a| a.to_s.size}
-    # @zipfiles.delete(link)
-    # parent, base = File.split(link.to_s)
-    # if parent == "."
-    #   item = link
-    # else
-    #   item = parent
-    # end
-    # @zipfiles.unshift(ZipFileStub.new(item))
-    
-    # # We want the parent of the original path, so we can go up
-    # if File.split(@path) != '.'
-    #   @zipfiles << ZipFileStub.new("#{File.split(@path)[0]}/")
-    # end
-    # Zip::ZipFile.foreach(@df.path) do |file|
-    #   # Rule: Remove the @path from the beginning of the string, then
-    #   # include any files that do not contain '/' except as the final
-    #   # character
-    #   item = orig = file.to_s
-    #   item.slice!(/^#{@path}\/?/)
-    #   debugger
-    #   if item == orig
-    #     parent = @path
-    #     while true
-    #       parent, base = File.split(parent)
-    #       parent = "\\." if parent == "."
-    #       item.slice!(/^#{parent}\/?/)
-    #       break if parent == "\\." || item != orig
-    #     end
-    #   end
-    #   debugger
-    #   if item == "" && orig.include?(@path)
-    #     num_slashes = item.scan(/\//).length
-    #     if num_slashes == 1 && item[-1] == "/"
-    #       @zipfiles << file
-    #     elsif num_slashes == 0 && item.length > 0
-    #       @zipfiles << file
-    #     end
-    #   end
-    # end
   end
 
   def not_found
@@ -281,7 +247,6 @@ class KoinController < ApplicationController
   #   - View any files posted by others users for logged-in users;
   #   - View any files posted by guests
   def show
-    #debugger
     @action = "View Files"
     if !@user.p_admin && params[:user] && params[:user] != @user.username
       session[:next_action] = 'show'
@@ -303,7 +268,6 @@ class KoinController < ApplicationController
   end
   
   def updateFile
-    #debugger
     @available = @user.available
     @upload = params[:data_file]
     if @upload
@@ -311,21 +275,16 @@ class KoinController < ApplicationController
     else
       get_datafile_from_token
     end
-    #debugger
     parm = params[:data_file][:p_permissions] ||'anyone'
     password = params.fetch(:data_file, {}).delete(:pass)
     @df.password = password if password != ""
-    # debugger
     if @df.update_attributes(params[:data_file])
-      # @df.subject = params[:subject]
-      # @df.description = params[:description]
       @df.creator_id ||= @user.id
     else
       flash[:error] = "File data could not be saved."
       render :index
       return
     end
-    #debugger
     case parm
     when 'me'
       @df.p_only_creator = true
@@ -344,27 +303,24 @@ class KoinController < ApplicationController
       @df.p_any_logged_user = false
       @df.p_upon_token_presentation = false
       @df.viewers << @user
-      params[:users][:selected].each do |id|
-        # debugger
-        @df.viewers << User.find(id.to_i)
+      JSON.parse(params[:users][:selected][0]).each do |id|
+        @df.viewers << User.find_by_username(id)
       end
     end
-    # if params[:expiration] != ""
-    #   @df.expiration = params[:expiration]
-    # end
   end
 
   def uploadFile
     # Figure out the available space for this user
-    #debugger
     if @upload
       begin
-        #debugger
         @df.capture_file(@upload, @available)
         @df.save!
       rescue DataFile::OverQuotaError => e
         @df = DataFile.new
         @error = "Can't upload file: Quota exceeded"
+      rescue DataFile::NoFileSpecifiedError => e
+        @df = DataFile.new
+        @error = "No file was specified"
       end
       respond_to do |format|
         format.html {
@@ -381,11 +337,9 @@ class KoinController < ApplicationController
         }
       end
     end
-    #debugger
   end
   
   def admin
-    # debugger
     @users = User.user_files
   end
 end

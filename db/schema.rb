@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120817014134) do
+ActiveRecord::Schema.define(:version => 20130101052715) do
 
   create_table "data_files", :force => true do |t|
     t.string   "digest"
@@ -53,7 +53,7 @@ ActiveRecord::Schema.define(:version => 20120817014134) do
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "users", :force => true do |t|
-    t.string   "username",                            :null => false
+    t.string   "username",                               :null => false
     t.string   "enc_passwd"
     t.string   "salt"
     t.boolean  "p_search_all",     :default => false
@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20120817014134) do
     t.string   "cookie"
     t.datetime "cookie_exp"
     t.string   "saved_enc_passwd"
+    t.string   "advanced_state",   :default => "closed"
   end
 
   add_index "users", ["username"], :name => "index_users_on_username", :unique => true

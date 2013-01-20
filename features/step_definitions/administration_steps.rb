@@ -1,6 +1,5 @@
 require 'rspec/expectations'
 require 'rubygems'
-# require 'ruby-debug'
 
 Given /^I am logged in as an? ([^ ]+) user$/ do |user_type|
   # debugger
